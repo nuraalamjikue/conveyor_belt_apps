@@ -1,0 +1,14 @@
+.section {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px 0;
+}
+
+.column {
+  flex: 1;
+  margin: 0 10px;
+  padding: 100px;
+  border: 1px solid #5a2525;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(184, 49, 49, 0.1);
+}
