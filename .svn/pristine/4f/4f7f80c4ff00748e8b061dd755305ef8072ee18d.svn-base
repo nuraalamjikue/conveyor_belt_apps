@@ -1,0 +1,232 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.snowtexERP"
+4    android:versionCode="1"
+5    android:versionName="1.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="21"
+9        android:targetSdkVersion="33" />
+10
+11    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+11-->D:\Dev\ERP_Apps\ERP_Mobile_Apps\android\app\src\debug\AndroidManifest.xml:5:5-77
+11-->D:\Dev\ERP_Apps\ERP_Mobile_Apps\android\app\src\debug\AndroidManifest.xml:5:22-75
+12    <uses-permission android:name="android.permission.INTERNET" /> <!-- manula import -->
+12-->D:\Dev\ERP_Apps\ERP_Mobile_Apps\android\app\src\main\AndroidManifest.xml:3:5-67
+12-->D:\Dev\ERP_Apps\ERP_Mobile_Apps\android\app\src\main\AndroidManifest.xml:3:22-64
+13    <uses-permission android:name="android.permission.VIBRATE" />
+13-->D:\Dev\ERP_Apps\ERP_Mobile_Apps\android\app\src\main\AndroidManifest.xml:5:5-65
+13-->D:\Dev\ERP_Apps\ERP_Mobile_Apps\android\app\src\main\AndroidManifest.xml:5:22-63
+14    <uses-permission android:name="android.permission.CAMERA" />
+14-->D:\Dev\ERP_Apps\ERP_Mobile_Apps\android\app\src\main\AndroidManifest.xml:6:1-61
+14-->D:\Dev\ERP_Apps\ERP_Mobile_Apps\android\app\src\main\AndroidManifest.xml:6:18-58
+15    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+15-->[com.facebook.flipper:flipper:0.182.0] C:\Users\IT\.gradle\caches\transforms-3\e13f88164840fe641a466d05cd8edac7\transformed\jetified-flipper-0.182.0\AndroidManifest.xml:16:5-76
+15-->[com.facebook.flipper:flipper:0.182.0] C:\Users\IT\.gradle\caches\transforms-3\e13f88164840fe641a466d05cd8edac7\transformed\jetified-flipper-0.182.0\AndroidManifest.xml:16:22-73
+16    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+16-->[:react-native-community_netinfo] D:\Dev\ERP_Apps\ERP_Mobile_Apps\node_modules\@react-native-community\netinfo\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:7:5-79
+16-->[:react-native-community_netinfo] D:\Dev\ERP_Apps\ERP_Mobile_Apps\node_modules\@react-native-community\netinfo\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:7:22-76
+17
+18    <uses-feature
+18-->[:react-native-camera] D:\Dev\ERP_Apps\ERP_Mobile_Apps\node_modules\react-native-camera\android\build\intermediates\merged_manifest\generalDebug\AndroidManifest.xml:9:5-11:36
+19        android:name="android.hardware.camera"
+19-->[:react-native-camera] D:\Dev\ERP_Apps\ERP_Mobile_Apps\node_modules\react-native-camera\android\build\intermediates\merged_manifest\generalDebug\AndroidManifest.xml:10:9-47
+20        android:required="false" />
+20-->[:react-native-camera] D:\Dev\ERP_Apps\ERP_Mobile_Apps\node_modules\react-native-camera\android\build\intermediates\merged_manifest\generalDebug\AndroidManifest.xml:11:9-33
+21    <uses-feature
+21-->[:react-native-camera] D:\Dev\ERP_Apps\ERP_Mobile_Apps\node_modules\react-native-camera\android\build\intermediates\merged_manifest\generalDebug\AndroidManifest.xml:12:5-14:36
+22        android:name="android.hardware.camera.autofocus"
+22-->[:react-native-camera] D:\Dev\ERP_Apps\ERP_Mobile_Apps\node_modules\react-native-camera\android\build\intermediates\merged_manifest\generalDebug\AndroidManifest.xml:13:9-57
+23        android:required="false" />
+23-->[:react-native-camera] D:\Dev\ERP_Apps\ERP_Mobile_Apps\node_modules\react-native-camera\android\build\intermediates\merged_manifest\generalDebug\AndroidManifest.xml:14:9-33
+24
+25    <permission
+25-->[androidx.core:core:1.9.0] C:\Users\IT\.gradle\caches\transforms-3\6071112da32bfbae80caeb5ecfa6fe8d\transformed\core-1.9.0\AndroidManifest.xml:22:5-24:47
+26        android:name="com.snowtexERP.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+26-->[androidx.core:core:1.9.0] C:\Users\IT\.gradle\caches\transforms-3\6071112da32bfbae80caeb5ecfa6fe8d\transformed\core-1.9.0\AndroidManifest.xml:23:9-81
+27        android:protectionLevel="signature" />
+27-->[androidx.core:core:1.9.0] C:\Users\IT\.gradle\caches\transforms-3\6071112da32bfbae80caeb5ecfa6fe8d\transformed\core-1.9.0\AndroidManifest.xml:24:9-44
+28
+29    <uses-permission android:name="com.snowtexERP.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+29-->[androidx.core:core:1.9.0] C:\Users\IT\.gradle\caches\transforms-3\6071112da32bfbae80caeb5ecfa6fe8d\transformed\core-1.9.0\AndroidManifest.xml:26:5-97
+29-->[androidx.core:core:1.9.0] C:\Users\IT\.gradle\caches\transforms-3\6071112da32bfbae80caeb5ecfa6fe8d\transformed\core-1.9.0\AndroidManifest.xml:26:22-94
+30
+31    <application
+31-->D:\Dev\ERP_Apps\ERP_Mobile_Apps\android\app\src\main\AndroidManifest.xml:7:5-27:19
+32        android:name="com.snowtexERP.MainApplication"
+32-->D:\Dev\ERP_Apps\ERP_Mobile_Apps\android\app\src\main\AndroidManifest.xml:8:7-38
+33        android:allowBackup="false"
+33-->D:\Dev\ERP_Apps\ERP_Mobile_Apps\android\app\src\main\AndroidManifest.xml:12:7-34
+34        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+34-->[androidx.core:core:1.9.0] C:\Users\IT\.gradle\caches\transforms-3\6071112da32bfbae80caeb5ecfa6fe8d\transformed\core-1.9.0\AndroidManifest.xml:28:18-86
+35        android:debuggable="true"
+36        android:icon="@mipmap/ic_launcher"
+36-->D:\Dev\ERP_Apps\ERP_Mobile_Apps\android\app\src\main\AndroidManifest.xml:10:7-41
+37        android:label="@string/app_name"
+37-->D:\Dev\ERP_Apps\ERP_Mobile_Apps\android\app\src\main\AndroidManifest.xml:9:7-39
+38        android:roundIcon="@mipmap/ic_launcher_round"
+38-->D:\Dev\ERP_Apps\ERP_Mobile_Apps\android\app\src\main\AndroidManifest.xml:11:7-52
+39        android:theme="@style/AppTheme"
+39-->D:\Dev\ERP_Apps\ERP_Mobile_Apps\android\app\src\main\AndroidManifest.xml:14:7-38
+40        android:usesCleartextTraffic="true" >
+40-->D:\Dev\ERP_Apps\ERP_Mobile_Apps\android\app\src\main\AndroidManifest.xml:13:7-42
+41        <activity
+41-->D:\Dev\ERP_Apps\ERP_Mobile_Apps\android\app\src\debug\AndroidManifest.xml:11:9-111
+42            android:name="com.facebook.react.devsupport.DevSettingsActivity"
+42-->D:\Dev\ERP_Apps\ERP_Mobile_Apps\android\app\src\debug\AndroidManifest.xml:11:19-83
+43            android:exported="false" />
+43-->D:\Dev\ERP_Apps\ERP_Mobile_Apps\android\app\src\debug\AndroidManifest.xml:11:84-108
+44        <activity
+44-->D:\Dev\ERP_Apps\ERP_Mobile_Apps\android\app\src\main\AndroidManifest.xml:15:7-26:18
+45            android:name="com.snowtexERP.MainActivity"
+45-->D:\Dev\ERP_Apps\ERP_Mobile_Apps\android\app\src\main\AndroidManifest.xml:16:9-37
+46            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
+46-->D:\Dev\ERP_Apps\ERP_Mobile_Apps\android\app\src\main\AndroidManifest.xml:18:9-118
+47            android:exported="true"
+47-->D:\Dev\ERP_Apps\ERP_Mobile_Apps\android\app\src\main\AndroidManifest.xml:21:9-32
+48            android:label="@string/app_name"
+48-->D:\Dev\ERP_Apps\ERP_Mobile_Apps\android\app\src\main\AndroidManifest.xml:17:9-41
+49            android:launchMode="singleTask"
+49-->D:\Dev\ERP_Apps\ERP_Mobile_Apps\android\app\src\main\AndroidManifest.xml:19:9-40
+50            android:windowSoftInputMode="adjustResize" >
+50-->D:\Dev\ERP_Apps\ERP_Mobile_Apps\android\app\src\main\AndroidManifest.xml:20:9-51
+51            <intent-filter>
+51-->D:\Dev\ERP_Apps\ERP_Mobile_Apps\android\app\src\main\AndroidManifest.xml:22:9-25:25
+52                <action android:name="android.intent.action.MAIN" />
+52-->D:\Dev\ERP_Apps\ERP_Mobile_Apps\android\app\src\main\AndroidManifest.xml:23:13-65
+52-->D:\Dev\ERP_Apps\ERP_Mobile_Apps\android\app\src\main\AndroidManifest.xml:23:21-62
+53
+54                <category android:name="android.intent.category.LAUNCHER" />
+54-->D:\Dev\ERP_Apps\ERP_Mobile_Apps\android\app\src\main\AndroidManifest.xml:24:13-73
+54-->D:\Dev\ERP_Apps\ERP_Mobile_Apps\android\app\src\main\AndroidManifest.xml:24:23-70
+55            </intent-filter>
+56        </activity>
+57
+58        <service
+58-->[com.google.android.gms:play-services-mlkit-barcode-scanning:16.2.0] C:\Users\IT\.gradle\caches\transforms-3\97799781954acc3d7354150c72b84ae2\transformed\jetified-play-services-mlkit-barcode-scanning-16.2.0\AndroidManifest.xml:9:9-15:19
+59            android:name="com.google.mlkit.common.internal.MlKitComponentDiscoveryService"
+59-->[com.google.android.gms:play-services-mlkit-barcode-scanning:16.2.0] C:\Users\IT\.gradle\caches\transforms-3\97799781954acc3d7354150c72b84ae2\transformed\jetified-play-services-mlkit-barcode-scanning-16.2.0\AndroidManifest.xml:10:13-91
+60            android:directBootAware="true"
+60-->[com.google.mlkit:common:17.2.0] C:\Users\IT\.gradle\caches\transforms-3\53ad5d231868f74729b71d2d86f60f8e\transformed\jetified-common-17.2.0\AndroidManifest.xml:17:13-43
+61            android:exported="false" >
+61-->[com.google.android.gms:play-services-mlkit-barcode-scanning:16.2.0] C:\Users\IT\.gradle\caches\transforms-3\97799781954acc3d7354150c72b84ae2\transformed\jetified-play-services-mlkit-barcode-scanning-16.2.0\AndroidManifest.xml:11:13-37
+62            <meta-data
+62-->[com.google.android.gms:play-services-mlkit-barcode-scanning:16.2.0] C:\Users\IT\.gradle\caches\transforms-3\97799781954acc3d7354150c72b84ae2\transformed\jetified-play-services-mlkit-barcode-scanning-16.2.0\AndroidManifest.xml:12:13-14:85
+63                android:name="com.google.firebase.components:com.google.mlkit.vision.barcode.internal.BarcodeRegistrar"
+63-->[com.google.android.gms:play-services-mlkit-barcode-scanning:16.2.0] C:\Users\IT\.gradle\caches\transforms-3\97799781954acc3d7354150c72b84ae2\transformed\jetified-play-services-mlkit-barcode-scanning-16.2.0\AndroidManifest.xml:13:17-120
+64                android:value="com.google.firebase.components.ComponentRegistrar" />
+64-->[com.google.android.gms:play-services-mlkit-barcode-scanning:16.2.0] C:\Users\IT\.gradle\caches\transforms-3\97799781954acc3d7354150c72b84ae2\transformed\jetified-play-services-mlkit-barcode-scanning-16.2.0\AndroidManifest.xml:14:17-82
+65            <meta-data
+65-->[com.google.android.gms:play-services-mlkit-face-detection:16.2.0] C:\Users\IT\.gradle\caches\transforms-3\b9f3389d51c178b8d896d7baeb40c059\transformed\jetified-play-services-mlkit-face-detection-16.2.0\AndroidManifest.xml:12:13-14:85
+66                android:name="com.google.firebase.components:com.google.mlkit.vision.face.internal.FaceRegistrar"
+66-->[com.google.android.gms:play-services-mlkit-face-detection:16.2.0] C:\Users\IT\.gradle\caches\transforms-3\b9f3389d51c178b8d896d7baeb40c059\transformed\jetified-play-services-mlkit-face-detection-16.2.0\AndroidManifest.xml:13:17-114
+67                android:value="com.google.firebase.components.ComponentRegistrar" />
+67-->[com.google.android.gms:play-services-mlkit-face-detection:16.2.0] C:\Users\IT\.gradle\caches\transforms-3\b9f3389d51c178b8d896d7baeb40c059\transformed\jetified-play-services-mlkit-face-detection-16.2.0\AndroidManifest.xml:14:17-82
+68            <meta-data
+68-->[com.google.android.gms:play-services-mlkit-text-recognition:16.3.0] C:\Users\IT\.gradle\caches\transforms-3\b92474410cc7ebbd2fad55921816aa5f\transformed\jetified-play-services-mlkit-text-recognition-16.3.0\AndroidManifest.xml:12:13-14:85
+69                android:name="com.google.firebase.components:com.google.mlkit.vision.text.internal.TextRegistrar"
+69-->[com.google.android.gms:play-services-mlkit-text-recognition:16.3.0] C:\Users\IT\.gradle\caches\transforms-3\b92474410cc7ebbd2fad55921816aa5f\transformed\jetified-play-services-mlkit-text-recognition-16.3.0\AndroidManifest.xml:13:17-114
+70                android:value="com.google.firebase.components.ComponentRegistrar" />
+70-->[com.google.android.gms:play-services-mlkit-text-recognition:16.3.0] C:\Users\IT\.gradle\caches\transforms-3\b92474410cc7ebbd2fad55921816aa5f\transformed\jetified-play-services-mlkit-text-recognition-16.3.0\AndroidManifest.xml:14:17-82
+71            <meta-data
+71-->[com.google.mlkit:vision-common:16.5.0] C:\Users\IT\.gradle\caches\transforms-3\b86801a92097a5dcc8fcd3577b45f061\transformed\jetified-vision-common-16.5.0\AndroidManifest.xml:12:13-14:85
+72                android:name="com.google.firebase.components:com.google.mlkit.vision.common.internal.VisionCommonRegistrar"
+72-->[com.google.mlkit:vision-common:16.5.0] C:\Users\IT\.gradle\caches\transforms-3\b86801a92097a5dcc8fcd3577b45f061\transformed\jetified-vision-common-16.5.0\AndroidManifest.xml:13:17-124
+73                android:value="com.google.firebase.components.ComponentRegistrar" />
+73-->[com.google.mlkit:vision-common:16.5.0] C:\Users\IT\.gradle\caches\transforms-3\b86801a92097a5dcc8fcd3577b45f061\transformed\jetified-vision-common-16.5.0\AndroidManifest.xml:14:17-82
+74            <meta-data
+74-->[com.google.mlkit:common:17.2.0] C:\Users\IT\.gradle\caches\transforms-3\53ad5d231868f74729b71d2d86f60f8e\transformed\jetified-common-17.2.0\AndroidManifest.xml:20:13-22:85
+75                android:name="com.google.firebase.components:com.google.mlkit.common.internal.CommonComponentRegistrar"
+75-->[com.google.mlkit:common:17.2.0] C:\Users\IT\.gradle\caches\transforms-3\53ad5d231868f74729b71d2d86f60f8e\transformed\jetified-common-17.2.0\AndroidManifest.xml:21:17-120
+76                android:value="com.google.firebase.components.ComponentRegistrar" />
+76-->[com.google.mlkit:common:17.2.0] C:\Users\IT\.gradle\caches\transforms-3\53ad5d231868f74729b71d2d86f60f8e\transformed\jetified-common-17.2.0\AndroidManifest.xml:22:17-82
+77        </service>
+78
+79        <provider
+79-->[com.google.mlkit:common:17.2.0] C:\Users\IT\.gradle\caches\transforms-3\53ad5d231868f74729b71d2d86f60f8e\transformed\jetified-common-17.2.0\AndroidManifest.xml:9:9-13:38
+80            android:name="com.google.mlkit.common.internal.MlKitInitProvider"
+80-->[com.google.mlkit:common:17.2.0] C:\Users\IT\.gradle\caches\transforms-3\53ad5d231868f74729b71d2d86f60f8e\transformed\jetified-common-17.2.0\AndroidManifest.xml:10:13-78
+81            android:authorities="com.snowtexERP.mlkitinitprovider"
+81-->[com.google.mlkit:common:17.2.0] C:\Users\IT\.gradle\caches\transforms-3\53ad5d231868f74729b71d2d86f60f8e\transformed\jetified-common-17.2.0\AndroidManifest.xml:11:13-69
+82            android:exported="false"
+82-->[com.google.mlkit:common:17.2.0] C:\Users\IT\.gradle\caches\transforms-3\53ad5d231868f74729b71d2d86f60f8e\transformed\jetified-common-17.2.0\AndroidManifest.xml:12:13-37
+83            android:initOrder="99" />
+83-->[com.google.mlkit:common:17.2.0] C:\Users\IT\.gradle\caches\transforms-3\53ad5d231868f74729b71d2d86f60f8e\transformed\jetified-common-17.2.0\AndroidManifest.xml:13:13-35
+84
+85        <activity
+85-->[com.google.android.gms:play-services-base:17.6.0] C:\Users\IT\.gradle\caches\transforms-3\795676a79a0c8e1cc25c8530d5bb032b\transformed\jetified-play-services-base-17.6.0\AndroidManifest.xml:23:9-26:75
+86            android:name="com.google.android.gms.common.api.GoogleApiActivity"
+86-->[com.google.android.gms:play-services-base:17.6.0] C:\Users\IT\.gradle\caches\transforms-3\795676a79a0c8e1cc25c8530d5bb032b\transformed\jetified-play-services-base-17.6.0\AndroidManifest.xml:24:13-79
+87            android:exported="false"
+87-->[com.google.android.gms:play-services-base:17.6.0] C:\Users\IT\.gradle\caches\transforms-3\795676a79a0c8e1cc25c8530d5bb032b\transformed\jetified-play-services-base-17.6.0\AndroidManifest.xml:25:13-37
+88            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+88-->[com.google.android.gms:play-services-base:17.6.0] C:\Users\IT\.gradle\caches\transforms-3\795676a79a0c8e1cc25c8530d5bb032b\transformed\jetified-play-services-base-17.6.0\AndroidManifest.xml:26:13-72
+89
+90        <meta-data
+90-->[com.google.android.gms:play-services-basement:17.6.0] C:\Users\IT\.gradle\caches\transforms-3\b63984d3b045444cdc55f8997826a36d\transformed\jetified-play-services-basement-17.6.0\AndroidManifest.xml:23:9-25:69
+91            android:name="com.google.android.gms.version"
+91-->[com.google.android.gms:play-services-basement:17.6.0] C:\Users\IT\.gradle\caches\transforms-3\b63984d3b045444cdc55f8997826a36d\transformed\jetified-play-services-basement-17.6.0\AndroidManifest.xml:24:13-58
+92            android:value="@integer/google_play_services_version" />
+92-->[com.google.android.gms:play-services-basement:17.6.0] C:\Users\IT\.gradle\caches\transforms-3\b63984d3b045444cdc55f8997826a36d\transformed\jetified-play-services-basement-17.6.0\AndroidManifest.xml:25:13-66
+93
+94        <provider
+94-->[androidx.emoji2:emoji2:1.2.0] C:\Users\IT\.gradle\caches\transforms-3\259206a491dfa4b8b6052b2b1c41d979\transformed\jetified-emoji2-1.2.0\AndroidManifest.xml:24:9-32:20
+95            android:name="androidx.startup.InitializationProvider"
+95-->[androidx.emoji2:emoji2:1.2.0] C:\Users\IT\.gradle\caches\transforms-3\259206a491dfa4b8b6052b2b1c41d979\transformed\jetified-emoji2-1.2.0\AndroidManifest.xml:25:13-67
+96            android:authorities="com.snowtexERP.androidx-startup"
+96-->[androidx.emoji2:emoji2:1.2.0] C:\Users\IT\.gradle\caches\transforms-3\259206a491dfa4b8b6052b2b1c41d979\transformed\jetified-emoji2-1.2.0\AndroidManifest.xml:26:13-68
+97            android:exported="false" >
+97-->[androidx.emoji2:emoji2:1.2.0] C:\Users\IT\.gradle\caches\transforms-3\259206a491dfa4b8b6052b2b1c41d979\transformed\jetified-emoji2-1.2.0\AndroidManifest.xml:27:13-37
+98            <meta-data
+98-->[androidx.emoji2:emoji2:1.2.0] C:\Users\IT\.gradle\caches\transforms-3\259206a491dfa4b8b6052b2b1c41d979\transformed\jetified-emoji2-1.2.0\AndroidManifest.xml:29:13-31:52
+99                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+99-->[androidx.emoji2:emoji2:1.2.0] C:\Users\IT\.gradle\caches\transforms-3\259206a491dfa4b8b6052b2b1c41d979\transformed\jetified-emoji2-1.2.0\AndroidManifest.xml:30:17-75
+100                android:value="androidx.startup" />
+100-->[androidx.emoji2:emoji2:1.2.0] C:\Users\IT\.gradle\caches\transforms-3\259206a491dfa4b8b6052b2b1c41d979\transformed\jetified-emoji2-1.2.0\AndroidManifest.xml:31:17-49
+101            <meta-data
+101-->[androidx.lifecycle:lifecycle-process:2.4.1] C:\Users\IT\.gradle\caches\transforms-3\b1c537e6049df5a2dcb1a9b20b1a8868\transformed\jetified-lifecycle-process-2.4.1\AndroidManifest.xml:31:13-33:52
+102                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+102-->[androidx.lifecycle:lifecycle-process:2.4.1] C:\Users\IT\.gradle\caches\transforms-3\b1c537e6049df5a2dcb1a9b20b1a8868\transformed\jetified-lifecycle-process-2.4.1\AndroidManifest.xml:32:17-78
+103                android:value="androidx.startup" />
+103-->[androidx.lifecycle:lifecycle-process:2.4.1] C:\Users\IT\.gradle\caches\transforms-3\b1c537e6049df5a2dcb1a9b20b1a8868\transformed\jetified-lifecycle-process-2.4.1\AndroidManifest.xml:33:17-49
+104        </provider>
+105
+106        <meta-data
+106-->[com.facebook.soloader:soloader:0.10.5] C:\Users\IT\.gradle\caches\transforms-3\ec3312a013bd7d8a70466a1977a1dba4\transformed\jetified-soloader-0.10.5\AndroidManifest.xml:12:9-14:37
+107            android:name="com.facebook.soloader.enabled"
+107-->[com.facebook.soloader:soloader:0.10.5] C:\Users\IT\.gradle\caches\transforms-3\ec3312a013bd7d8a70466a1977a1dba4\transformed\jetified-soloader-0.10.5\AndroidManifest.xml:13:13-57
+108            android:value="false" />
+108-->[com.facebook.soloader:soloader:0.10.5] C:\Users\IT\.gradle\caches\transforms-3\ec3312a013bd7d8a70466a1977a1dba4\transformed\jetified-soloader-0.10.5\AndroidManifest.xml:14:13-34
+109
+110        <service
+110-->[com.google.android.datatransport:transport-backend-cct:2.3.3] C:\Users\IT\.gradle\caches\transforms-3\e39449332b16abbff71917ad5661bdd3\transformed\jetified-transport-backend-cct-2.3.3\AndroidManifest.xml:29:9-35:19
+111            android:name="com.google.android.datatransport.runtime.backends.TransportBackendDiscovery"
+111-->[com.google.android.datatransport:transport-backend-cct:2.3.3] C:\Users\IT\.gradle\caches\transforms-3\e39449332b16abbff71917ad5661bdd3\transformed\jetified-transport-backend-cct-2.3.3\AndroidManifest.xml:30:13-103
+112            android:exported="false" >
+112-->[com.google.android.datatransport:transport-backend-cct:2.3.3] C:\Users\IT\.gradle\caches\transforms-3\e39449332b16abbff71917ad5661bdd3\transformed\jetified-transport-backend-cct-2.3.3\AndroidManifest.xml:31:13-37
+113            <meta-data
+113-->[com.google.android.datatransport:transport-backend-cct:2.3.3] C:\Users\IT\.gradle\caches\transforms-3\e39449332b16abbff71917ad5661bdd3\transformed\jetified-transport-backend-cct-2.3.3\AndroidManifest.xml:32:13-34:39
+114                android:name="backend:com.google.android.datatransport.cct.CctBackendFactory"
+114-->[com.google.android.datatransport:transport-backend-cct:2.3.3] C:\Users\IT\.gradle\caches\transforms-3\e39449332b16abbff71917ad5661bdd3\transformed\jetified-transport-backend-cct-2.3.3\AndroidManifest.xml:33:17-94
+115                android:value="cct" />
+115-->[com.google.android.datatransport:transport-backend-cct:2.3.3] C:\Users\IT\.gradle\caches\transforms-3\e39449332b16abbff71917ad5661bdd3\transformed\jetified-transport-backend-cct-2.3.3\AndroidManifest.xml:34:17-36
+116        </service>
+117        <service
+117-->[com.google.android.datatransport:transport-runtime:2.2.6] C:\Users\IT\.gradle\caches\transforms-3\5b4aa339182f7c0c9798b03e5e65fdd0\transformed\jetified-transport-runtime-2.2.6\AndroidManifest.xml:26:9-30:19
+118            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.JobInfoSchedulerService"
+118-->[com.google.android.datatransport:transport-runtime:2.2.6] C:\Users\IT\.gradle\caches\transforms-3\5b4aa339182f7c0c9798b03e5e65fdd0\transformed\jetified-transport-runtime-2.2.6\AndroidManifest.xml:27:13-117
+119            android:exported="false"
+119-->[com.google.android.datatransport:transport-runtime:2.2.6] C:\Users\IT\.gradle\caches\transforms-3\5b4aa339182f7c0c9798b03e5e65fdd0\transformed\jetified-transport-runtime-2.2.6\AndroidManifest.xml:28:13-37
+120            android:permission="android.permission.BIND_JOB_SERVICE" >
+120-->[com.google.android.datatransport:transport-runtime:2.2.6] C:\Users\IT\.gradle\caches\transforms-3\5b4aa339182f7c0c9798b03e5e65fdd0\transformed\jetified-transport-runtime-2.2.6\AndroidManifest.xml:29:13-69
+121        </service>
+122
+123        <receiver
+123-->[com.google.android.datatransport:transport-runtime:2.2.6] C:\Users\IT\.gradle\caches\transforms-3\5b4aa339182f7c0c9798b03e5e65fdd0\transformed\jetified-transport-runtime-2.2.6\AndroidManifest.xml:32:9-34:40
+124            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.AlarmManagerSchedulerBroadcastReceiver"
+124-->[com.google.android.datatransport:transport-runtime:2.2.6] C:\Users\IT\.gradle\caches\transforms-3\5b4aa339182f7c0c9798b03e5e65fdd0\transformed\jetified-transport-runtime-2.2.6\AndroidManifest.xml:33:13-132
+125            android:exported="false" />
+125-->[com.google.android.datatransport:transport-runtime:2.2.6] C:\Users\IT\.gradle\caches\transforms-3\5b4aa339182f7c0c9798b03e5e65fdd0\transformed\jetified-transport-runtime-2.2.6\AndroidManifest.xml:34:13-37
+126    </application>
+127
+128</manifest>

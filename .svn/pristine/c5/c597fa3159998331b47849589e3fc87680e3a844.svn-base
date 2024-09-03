@@ -1,0 +1,9 @@
+const isLoginExpired = (expDate, curDate) => {
+  if (expDate < curDate) {
+    return true;
+  } else {
+    return false;
+  }
+};
+
+export default isLoginExpired;

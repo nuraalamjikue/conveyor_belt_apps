@@ -1,0 +1,481 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
+import instance from 'axios/axiosInstance';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import DropDownPicker from 'react-native-dropdown-picker';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { Checkbox } from 'react-native-paper';
+import Toast from 'react-native-toast-message';
+import { useAppTheme } from '../../../../App';
+import Button from '../../../components/Button';
+import Container from '../../../components/Container';
+
+const MenuPermissionScreen = () => {
+  const {COLORS,SIZES} = useAppTheme();
+  const navigation = useNavigation();
+
+  const [selectedParentMenu, setSelectedParentMenu] = useState(null);
+  const [isParenMenuOpen, setIsParenMenuOpen] = useState(false);
+
+  const [isLebelOneSelected, setIsLebelOneSelected] = useState('');
+  const [isLebelTwoSelected, setIsLebelTwoSelected] = useState('');
+  const [isLebelThreeSelected, setIsLebelThreeSelected] = useState('');
+  const [allCheck, setAllCheck] = useState(false);
+
+  const [items, setItems] = useState([]);
+
+  const [data, setData] = useState();
+
+  const getUserWiseMenuHandler = async id => {
+    if (id) {
+      instance.interceptors.request.use(request => {
+        return request;
+      });
+      await instance
+        .post(`AppsLogin_Menu/UserWiseMenu_Apps/${id}`)
+        .then(res => {
+          let jsonParse = JSON.parse(res?.data?.res);
+          setData(jsonParse);
+        })
+        .catch(err => {
+          if (err) {
+            console.log(err.message);
+          }
+        });
+    } else {
+      Toast.show({
+        type: 'error',
+        text1: 'Warn',
+        text2: 'Please select a user...!',
+        position: 'top',
+        visibilityTime: 2000,
+      });
+    }
+  };
+
+  useEffect(() => {
+    parentMenuHandler();
+  }, []);
+
+  const parentMenuHandler = async id => {
+    userId = await AsyncStorage.getItem('userId');
+    userAddLoginId = await AsyncStorage.getItem('userAddLoginId');
+
+    await instance
+      .post(`Common/GetDropDownUser/${id}`)
+      .then(res => {
+        res?.data?.res?.forEach(element => {
+          element.value = element.id;
+          element.label = element.username;
+        });
+        setItems(res?.data.res);
+      })
+      .catch(err => {
+        if (err) {
+          console.log(err.message);
+        }
+      });
+  };
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      setData([]);
+      setSelectedParentMenu(null);
+    });
+    return unsubscribe;
+  }, [navigation]);
+
+  const checkAllHandler = () => {
+    var finalcheck = false;
+    if (allCheck == false) {
+      finalcheck = true;
+    } else {
+      finalcheck = false;
+    }
+    const datas = [...data];
+    datas?.forEach(element => {
+      element.checked = finalcheck;
+      element.childrenNodes?.forEach(elemen => {
+        elemen.checked = finalcheck;
+        elemen.childrenNodes?.forEach(elem => {
+          elem.checked = finalcheck;
+        });
+      });
+    });
+    setData(datas);
+  };
+
+  function toggleCheckFirstLayer(firstIndex) {
+    const datas = [...data];
+    datas[firstIndex].checked = !datas[firstIndex].checked;
+
+    datas[firstIndex]?.childrenNodes?.forEach(element => {
+      if (datas[firstIndex]?.checked) {
+        element.checked = true;
+        element.childrenNodes?.forEach(elem => {
+          elem.checked = true;
+          element.childrenNodes?.forEach(elem => {
+            elem.checked = true;
+          });
+        });
+      }
+      if (!datas[firstIndex]?.checked) {
+        element.checked = false;
+        element.childrenNodes?.forEach(elem => {
+          elem.checked = false;
+          element.childrenNodes?.forEach(elem => {
+            elem.checked = false;
+          });
+        });
+      }
+    });
+    setData(datas);
+  }
+
+  function toggleCheckSecondLayer(firstIndex, secondIndex) {
+    const datas = [...data];
+
+    datas[firstIndex].childrenNodes[secondIndex].checked =
+      !datas[firstIndex].childrenNodes[secondIndex].checked;
+    datas[firstIndex]?.childrenNodes?.forEach((element, idx) => {
+      element.childrenNodes?.forEach((elm, ind) => {
+        if (secondIndex == idx) {
+          elm.checked = datas[firstIndex].childrenNodes[secondIndex].checked;
+        }
+      });
+      if (checkActiveStatus(datas[firstIndex]?.childrenNodes) == 1) {
+        datas[firstIndex].checked = true;
+      } else {
+        datas[firstIndex].checked = false;
+      }
+    });
+    setData(datas);
+  }
+
+  function checkActiveStatus(data) {
+    var a = 0;
+    data?.forEach(element => {
+      if (element?.checked == true) {
+        a = 1;
+      }
+    });
+    return a;
+  }
+
+  function toggleCheckThirdLayer(firstIndex, secondIndex, thirdIndex) {
+    const datas = [...data];
+
+    datas[firstIndex].childrenNodes[secondIndex].childrenNodes[
+      thirdIndex
+    ].checked =
+      !datas[firstIndex].childrenNodes[secondIndex].childrenNodes[thirdIndex]
+        .checked;
+
+    datas[firstIndex].childrenNodes?.forEach((element, fidx) => {
+      if (secondIndex === fidx) {
+        if (checkActiveStatus(element.childrenNodes) == 1) {
+          datas[firstIndex].childrenNodes[secondIndex].checked = true;
+        } else {
+          datas[firstIndex].childrenNodes[secondIndex].checked = false;
+        }
+        if (checkActiveStatus(datas[firstIndex].childrenNodes) == 1) {
+          datas[firstIndex].checked = true;
+        } else {
+          datas[firstIndex].checked = false;
+        }
+      }
+    });
+
+    setData(datas);
+  }
+
+  const submitHandler = () => {
+    const datas = [...data];
+    datas.forEach(element => {
+      if (element.checked === true || element.id > 0) {
+        let firstLayer = {};
+        firstLayer.userid = userId;
+        firstLayer.adloginid = userAddLoginId;
+        firstLayer.id = element?.id;
+        firstLayer.menuUserId = selectedParentMenu;
+        firstLayer.menuId = element?.menuId;
+        firstLayer.serialNo = element?.menuSL;
+        firstLayer.active = element?.checked === true ? 1 : 2;
+        instance
+          .post('AppsLogin_Menu/CreateUpdateMenuDetails', firstLayer)
+          .then(res => {
+            if (res.status === 200) {
+              console.log(res?.status);
+            }
+          })
+          .catch(err => {
+            if (err) {
+              console.log(err);
+            }
+          });
+      }
+
+      element?.childrenNodes?.forEach(elem => {
+        if (elem.checked === true || elem.id > 0) {
+          let secondLayer = {};
+          secondLayer.userid = userId;
+          secondLayer.adloginid = userAddLoginId;
+          secondLayer.id = elem?.id;
+          secondLayer.menuUserId = selectedParentMenu;
+          secondLayer.menuId = elem?.menuId;
+          secondLayer.serialNo = elem?.menuSL;
+          secondLayer.active = elem?.checked === true ? 1 : 2;
+          instance
+            .post('AppsLogin_Menu/CreateUpdateMenuDetails', secondLayer)
+            .then(res => {
+              if (res.status === 200) {
+                console.log(res?.status);
+              }
+            })
+            .catch(err => {
+              if (err) {
+                console.log(err);
+              }
+            });
+        }
+        elem?.childrenNodes?.forEach(elm => {
+          if (elm.checked === true || elm.id > 0) {
+            let thirdLayer = {};
+            thirdLayer.userid = userId;
+            thirdLayer.adloginid = userAddLoginId;
+            thirdLayer.id = elm?.id;
+            thirdLayer.menuUserId = selectedParentMenu;
+            thirdLayer.menuId = elm?.menuId;
+            thirdLayer.serialNo = elm?.menuSL;
+            thirdLayer.active = elm?.checked === true ? 1 : 2;
+            instance
+              .post('AppsLogin_Menu/CreateUpdateMenuDetails', thirdLayer)
+              .then(res => {
+                if (res.status === 200) {
+                  setData([]);
+                }
+              })
+              .catch(err => {
+                if (err) {
+                  console.log(err);
+                }
+              });
+          }
+        });
+      });
+    }); 
+    updateMenuToast();
+  };
+
+  const updateMenuToast = () => {
+    Toast.show({
+      type: 'success',
+      text1: 'Success',
+      text2: 'Menu created updated',
+      position: 'top',
+      visibilityTime: 2000,
+    });
+  };
+
+  return (
+   <Container>
+     <View style={styles.container}>
+      <View style={styles.subContainer}>
+        <DropDownPicker
+          placeholder="Select/Type User"
+          open={isParenMenuOpen}
+          value={selectedParentMenu}
+          items={items}
+          setOpen={setIsParenMenuOpen}
+          setValue={setSelectedParentMenu}
+          setItems={setItems}
+          searchable={true}
+          zIndex={5000}
+          zIndexInverse={1000}
+          onChangeSearchText={value => {
+            parentMenuHandler(value);
+          }}
+          style={{
+            minHeight: 40,
+            backgroundColor: COLORS.primary,
+          }}
+          labelStyle={{
+            color: COLORS.white,
+          }}
+          containerStyle={{
+            width: '100%',
+          }}
+          dropDownContainerStyle={{
+            borderColor: COLORS.primary,
+          }}
+          selectedItemContainerStyle={{
+            backgroundColor: COLORS.primary,
+          }}
+        />
+      </View> 
+        <Button
+         style={{ 
+          marginTop: 10, 
+          alignSelf: 'flex-end',
+        }}
+        borderRadius={5}
+        width={SIZES.width / 3.5}
+        height={SIZES.height / 20}
+        textSize={14}
+        textColor={COLORS.white}
+        fontWeight="bold" 
+        bgColor={COLORS.primary}
+        onPress={() => getUserWiseMenuHandler(selectedParentMenu)}>
+        Search
+      </Button>
+
+      <Toast position="top" topOffset={50} />
+      <View
+        style={{
+          width: '60%',
+          elevation: 10,
+        }}>
+        {data && data.length > 0 && (
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              borderRadius: 5,
+            }}>
+            <Checkbox
+              color={COLORS.primary}
+              onPress={() => {
+                setAllCheck(!allCheck);
+                checkAllHandler();
+              }}
+              status={allCheck ? 'checked' : 'unchecked'}
+            />
+            <Text>Check / Uncheck ALL</Text>
+          </View>
+        )}
+
+        {data?.map((layerOneItem, firstIndex) => {
+          return (
+            <View key={firstIndex}>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <Checkbox
+                  status={layerOneItem?.checked ? 'checked' : 'unchecked'}
+                  onPress={() => toggleCheckFirstLayer(firstIndex)}
+                  color={COLORS.primary}
+                />
+                <TouchableOpacity
+                  onPress={() => {
+                    setIsLebelOneSelected(layerOneItem?.label);
+                  }}>
+                  <Text>{layerOneItem?.label}</Text>
+                </TouchableOpacity>
+              </View>
+              {layerOneItem?.childrenNodes &&
+                isLebelOneSelected === layerOneItem?.label &&
+                layerOneItem?.childrenNodes?.map(
+                  (layerTowItem, secondIndex) => {
+                    return (
+                      <View key={secondIndex}>
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            paddingLeft: '8%',
+                          }}>
+                          <Checkbox
+                            status={
+                              layerTowItem?.checked ? 'checked' : 'unchecked'
+                            }
+                            onPress={() =>
+                              toggleCheckSecondLayer(firstIndex, secondIndex)
+                            } 
+                            color={COLORS.primary}
+                          />
+                          <TouchableOpacity
+                            onPress={() => {
+                              setIsLebelTwoSelected(layerTowItem?.label);
+                            }}>
+                            <Text>{layerTowItem?.label}</Text>
+                          </TouchableOpacity>
+                        </View>
+                        {layerTowItem?.childrenNodes &&
+                          isLebelTwoSelected === layerTowItem?.label &&
+                          layerTowItem?.childrenNodes?.map(
+                            (layerThereeItem, thirdIndex) => {
+                              return (
+                                <View
+                                  key={thirdIndex}
+                                  style={{
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    paddingLeft: '16%',
+                                  }}>
+                                  <Checkbox
+                                    status={
+                                      layerThereeItem?.checked
+                                        ? 'checked'
+                                        : 'unchecked'
+                                    }
+                                    color={COLORS.primary}
+                                    onPress={() =>
+                                      toggleCheckThirdLayer(
+                                        firstIndex,
+                                        secondIndex,
+                                        thirdIndex,
+                                      )
+                                    }
+                                  />
+
+                                  <TouchableOpacity
+                                    onPress={() => {
+                                      setIsLebelThreeSelected(
+                                        !isLebelThreeSelected,
+                                      );
+                                    }}>
+                                    <Text>{layerThereeItem?.label}</Text>
+                                  </TouchableOpacity>
+                                </View>
+                              );
+                            },
+                          )}
+                      </View>
+                    );
+                  },
+                )}
+            </View>
+          );
+        })}
+      </View>
+      {data && data.length > 0 && (
+        <Button
+        borderRadius={5}
+        width={SIZES.width / 3.5}
+        height={SIZES.height / 20}
+        textSize={14}
+        textColor={COLORS.white}
+        fontWeight="bold" 
+        style={{ 
+              alignSelf: 'flex-end', 
+              marginTop: 10,
+            }}
+        bgColor={COLORS.primary}
+        onPress={() => submitHandler()}>
+        Submit
+      </Button>
+      )}
+    </View>
+   </Container>
+  );
+};
+const styles = StyleSheet.create({
+  container: {
+    margin: 15,
+  },
+  subContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },  
+});
+
+export default MenuPermissionScreen;

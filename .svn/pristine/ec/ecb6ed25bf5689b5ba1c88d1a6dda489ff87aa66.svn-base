@@ -1,0 +1,200 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useIsFocused, useNavigation, useRoute} from '@react-navigation/native';
+import jwt_decode from 'jwt-decode';
+import React, {useEffect, useState} from 'react';
+import {TouchableOpacity, View} from 'react-native';
+import {Appbar, Menu} from 'react-native-paper';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/Ionicons';
+import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import SimpleLineIcon from 'react-native-vector-icons/SimpleLineIcons';
+import {UserInfoInterface} from '../../src/interface/UserInfo';
+import {COLORS, SIZES} from '../../src/theme/Index';
+import {Text} from './Text';
+
+let userInfo: UserInfoInterface;
+const Container = ({children}) => {
+  const [visible, setVisible] = useState(false);
+  const isFocused = useIsFocused();
+  const navigation = useNavigation();
+  const {name} = useRoute();
+
+  const modalActionHandler = val => {
+    setVisible(val);
+  };
+
+  const fun = async () => {
+    let token: string | null = await AsyncStorage.getItem('token');
+    userInfo = jwt_decode(token!);
+  };
+
+  useEffect(() => {
+    if (isFocused) {
+      fun();
+    }
+  }, [isFocused, userInfo]);
+
+  return (
+    <View>
+      <Appbar.Header style={{backgroundColor: COLORS?.primary}}>
+        <Icon
+          name="menu"
+          size={24}
+          color={COLORS.white}
+          style={{
+            alignSelf: 'center',
+            padding: 15,
+          }}
+          onPress={() => {
+            //@ts-ignore
+            navigation.toggleDrawer();
+          }}
+        />
+        <Appbar.Content title={name} color={COLORS.white} />
+        <View style={{flexDirection: 'row'}}>
+          <Icon
+            name="notifications-circle-outline"
+            size={24}
+            color={COLORS.white}
+            style={{
+              alignSelf: 'center',
+            }}
+            onPress={() => {
+              console.log('notification btn pressed');
+            }}
+          />
+          <Menu
+            contentStyle={{
+              width: SIZES.width / 2,
+              marginTop: SIZES.width / 12,
+              backgroundColor: COLORS.lightGray7,
+            }}
+            visible={visible}
+            onDismiss={() => {
+              modalActionHandler(false);
+            }}
+            anchor={
+              <Appbar.Action
+                size={30}
+                icon={() => {
+                  return (
+                    <FontAwesomeIcon
+                      name="user-circle-o"
+                      size={24}
+                      color={COLORS.white}
+                      style={{
+                        alignSelf: 'center',
+                        paddingTop: 3,
+                      }}
+                    />
+                  );
+                }}
+                color="white"
+                onPress={() => {
+                  modalActionHandler(true);
+                }}
+              />
+            }>
+            <View
+              style={{
+                backgroundColor: COLORS.lightGray,
+                marginBottom: 10,
+              }}>
+              <Text
+                style={{
+                  color: COLORS.white,
+                  alignSelf: 'center',
+                  marginVertical: 10,
+                  fontWeight: 'bold',
+                }}
+                fontSize="md">
+                {userInfo?.fullname}
+              </Text>
+            </View>
+            <TouchableOpacity
+              onPress={() => {
+                console.log('profile');
+              }}
+              style={{
+                flexDirection: 'row',
+                marginVertical: 5,
+                alignItems: 'center',
+              }}>
+              <SimpleLineIcon
+                name="user"
+                size={18}
+                color={COLORS.primary}
+                style={{paddingHorizontal: 10}}
+              />
+              <Text style={{color: COLORS.gray}} fontSize={13}>
+                Profile
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                console.log('profile');
+              }}
+              style={{
+                flexDirection: 'row',
+                marginVertical: 5,
+                alignItems: 'center',
+              }}>
+              <Icon
+                name="settings"
+                size={18}
+                color={COLORS.primary}
+                style={{paddingHorizontal: 10}}
+              />
+              <Text style={{color: COLORS.gray}} fontSize={13}>
+                Change password
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                console.log('profile');
+              }}
+              style={{
+                flexDirection: 'row',
+                marginVertical: 5,
+                alignItems: 'center',
+              }}>
+              <MaterialIcon
+                name="email"
+                size={20}
+                color={COLORS.primary}
+                style={{paddingHorizontal: 10}}
+              />
+
+              <Text style={{color: COLORS.gray}} fontSize={13}>
+                Change email
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                console.log('profile');
+              }}
+              style={{
+                flexDirection: 'row',
+                marginVertical: 5,
+                alignItems: 'center',
+              }}>
+              <MaterialIcon
+                name="logout"
+                size={20}
+                color={COLORS.primary}
+                style={{paddingHorizontal: 10}}
+              />
+
+              <Text style={{color: COLORS.gray}} fontSize={13}>
+                Logout
+              </Text>
+            </TouchableOpacity>
+          </Menu>
+        </View>
+      </Appbar.Header>
+      {children}
+    </View>
+  );
+};
+
+export default Container;

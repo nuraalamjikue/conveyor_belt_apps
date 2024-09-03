@@ -1,0 +1,22 @@
+import React from 'react';
+import {StyleSheet, View} from 'react-native';
+import {Text} from 'react-native-paper';
+import Container from '../components/Container';
+
+const BuyerWiseScreen = () => {
+  return (
+    <Container>
+      <View style={styles.container}>
+        <Text>Buyer Wise Screen</Text>
+      </View>
+    </Container>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    margin: 15,
+  },
+});
+
+export default BuyerWiseScreen;

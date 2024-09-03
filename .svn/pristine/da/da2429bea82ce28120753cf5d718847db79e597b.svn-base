@@ -1,0 +1,120 @@
+import {createDrawerNavigator} from '@react-navigation/drawer';
+import React from 'react';
+import {StyleSheet} from 'react-native';
+import {useAppTheme} from '../../App';
+import CustomDrawer from '../components/CustomDrawer';
+import AssortPackingEntryScreen from '../screens/AssortPackingEntryScreen';
+import DashboardScreen from '../screens/DashboardScreen';
+import FinishingScreen from '../screens/FinishingScreen';
+import OperationalExcellenceSetupScreen from '../screens/OperationalExcellenceSetupScreen';
+import SolidPackingEntryScreen from '../screens/SolidPackingEntryScreen';
+import CartonSendScreen from '../screens/finishing/CartonSendScreen';
+import MenuCreateScreen from '../screens/settings/security/MenuCreateScreen';
+import MenuPermissionScreen from '../screens/settings/security/MenuPermissionScreen';
+import CartonLineAssignScreen from '../screens/warehouse/CartonLineAssignScreen';
+import CartonReceiveScreen from '../screens/warehouse/CartonReceiveScreen';
+import LineAllocatedScreen from '../screens/warehouse/LineAllocatedScreen';
+import TransferAssignScreen from '../screens/warehouse/TransferAssignScreen';
+
+const Drawer = createDrawerNavigator();
+
+const routes = [
+  {
+    id: 1,
+    route: 'Dashboard',
+    component: DashboardScreen,
+  },
+  {
+    id: 2,
+    route: 'Solid Packing Entry',
+    component: SolidPackingEntryScreen,
+  },
+  {
+    id: 3,
+    route: 'Assort Packing Entry',
+    component: AssortPackingEntryScreen,
+  },
+  {
+    id: 4,
+    route: 'Operational Excellence Setup',
+    component: OperationalExcellenceSetupScreen,
+  },
+  {
+    id: 5,
+    route: 'Menu Create',
+    component: MenuCreateScreen,
+  },
+  {
+    id: 6,
+    route: 'Menu Permission',
+    component: MenuPermissionScreen,
+  },
+  {
+    id: 7,
+    route: 'Finishing',
+    component: FinishingScreen,
+  },
+  {
+    id: 8,
+    route: 'Carton Send',
+    component: CartonSendScreen,
+  },
+  {
+    id: 9,
+    route: 'Carton Receive',
+    component: CartonReceiveScreen,
+  },
+  {
+    id: 10,
+    route: 'Carton Line Assign',
+    component: CartonLineAssignScreen,
+  },
+  {
+    id: 11,
+    route: 'Transfer Assign',
+    component: TransferAssignScreen,
+  },
+  {
+    id: 12,
+    route: 'Line Allocated',
+    component: LineAllocatedScreen,
+  },
+];
+
+const Sidebar = () => {
+  const {COLORS} = useAppTheme();
+
+  return (
+    <Drawer.Navigator
+      initialRouteName="Dashboard"
+      screenOptions={{
+        headerStyle: {backgroundColor: COLORS.primary},
+        headerTintColor: COLORS.white,
+        headerTitleStyle: styles.headerTitle,
+      }}
+      //@ts-ignore
+      drawerContent={props => <CustomDrawer {...props} />}>
+      {routes?.map(item => {
+        return (
+          <Drawer.Screen
+            key={item?.id}
+            name={item?.route}
+            component={item?.component}
+            options={{
+              headerShown: false,
+              headerTitle: item?.route,
+            }}
+          />
+        );
+      })}
+    </Drawer.Navigator>
+  );
+};
+const styles = StyleSheet.create({
+  headerTitle: {
+    fontWeight: 'bold',
+    fontSize: 20,
+  },
+});
+
+export default Sidebar;

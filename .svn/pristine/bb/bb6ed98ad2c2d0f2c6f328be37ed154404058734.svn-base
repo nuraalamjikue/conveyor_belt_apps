@@ -1,0 +1,72 @@
+import React from 'react';
+import {StyleSheet, TouchableOpacity} from 'react-native';
+import {COLORS, SIZES} from '../theme/Index';
+import Label from './Label';
+
+interface props {
+  style?: any;
+  otherprops?: any;
+  children?: any;
+  onPress: any;
+  width?: number;
+  height?: number;
+  bgColor?: string;
+  textColor?: string;
+  textSize?: number;
+  borderRadius?: number;
+  fontWeight?: string;
+}
+
+const Button = ({
+  children,
+  onPress,
+  style,
+  width,
+  height,
+  bgColor,
+  textColor,
+  textSize,
+  borderRadius,
+  fontWeight,
+}: props) => {
+  return (
+    <TouchableOpacity
+      activeOpacity={0.9}
+      style={[
+        style,
+        styles.opacityStyle,
+        {
+          backgroundColor: bgColor || COLORS.transparent,
+          borderColor: COLORS.primary,
+          width: width || 60,
+          height: height || 30,
+          borderWidth: SIZES.p3 - 9,
+          borderRadius: borderRadius || SIZES.p3 - 10,
+        },
+      ]}
+      onPress={onPress}>
+      <Label
+        style={[
+          styles.textStyle,
+          {
+            color: textColor || COLORS.white,
+            fontSize: textSize || SIZES.p2,
+            fontWeight: fontWeight || 'normal',
+          },
+        ]}>
+        {children}
+      </Label>
+    </TouchableOpacity>
+  );
+};
+
+export default Button;
+
+const styles = StyleSheet.create({
+  textStyle: {
+    textAlign: 'center',
+  },
+  opacityStyle: {
+    justifyContent: 'center',
+  },
+});

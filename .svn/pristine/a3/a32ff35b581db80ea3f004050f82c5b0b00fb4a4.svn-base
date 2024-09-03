@@ -1,0 +1,71 @@
+/**
+ * Sample React Native App
+ * https://github.com/facebook/react-native
+ *
+ * @format
+ */
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {NavigationContainer} from '@react-navigation/native';
+import React, {useEffect, useRef, useState} from 'react';
+import 'react-native-gesture-handler';
+import {
+  MD3LightTheme,
+  Provider as PaperProvider,
+  useTheme,
+} from 'react-native-paper';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+import MainStack from './src/navigators/MainStack';
+
+// import at the very top of everything.
+import './ignoreWarnings';
+import RNBootSplash from 'react-native-bootsplash';
+import appTheme from './src/theme/Index';
+import {AppProvider} from './src/store/AppContext';
+
+const theme = {
+  ...MD3LightTheme,
+  ...appTheme,
+};
+
+export type AppTheme = typeof theme;
+
+export const useAppTheme = () => useTheme<AppTheme>();
+
+function App() {
+  const nav = useRef(null);
+  const [token, setToken] = useState<String | null | undefined>(undefined);
+
+  useEffect(() => {
+    const fun = async () => {
+      let getToken = await AsyncStorage.getItem('token');
+      setToken(getToken);
+    };
+    fun();
+  }, []);
+
+  useEffect(() => {
+    const init = async () => {
+      // …do multiple sync or async tasks
+    };
+
+    init().finally(async () => {
+      await RNBootSplash.hide({fade: true, duration: 500});
+      console.log('BootSplash has been hidden successfully');
+    });
+  }, []);
+
+  return (
+    <AppProvider>
+      <SafeAreaProvider>
+        <PaperProvider theme={theme}>
+          <NavigationContainer ref={nav}>
+            <MainStack token={token} />
+          </NavigationContainer>
+        </PaperProvider>
+      </SafeAreaProvider>
+    </AppProvider>
+  );
+}
+
+export default App;

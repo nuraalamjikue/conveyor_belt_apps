@@ -1,0 +1,18 @@
+import React from 'react';
+import {Text} from 'react-native';
+
+interface props {
+  style?: any;
+  otherprops?: any;
+  children: any;
+}
+
+const Label = ({children, style, ...otherprops}: props) => {
+  return (
+    <Text style={style} {...otherprops}>
+      {children}
+    </Text>
+  );
+};
+
+export default Label;

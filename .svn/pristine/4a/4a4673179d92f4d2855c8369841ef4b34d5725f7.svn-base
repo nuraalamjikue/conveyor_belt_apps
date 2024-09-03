@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "com.airbnb.android.react.lottie.lottie-react-native-merged_res-25:/layout-watch-v20/abc_alert_dialog_button_bar_material.xml",
+        "source": "com.airbnb.android.react.lottie.lottie-react-native-appcompat-1.6.1-11:/layout-watch-v20/abc_alert_dialog_button_bar_material.xml"
+    },
+    {
+        "merged": "com.airbnb.android.react.lottie.lottie-react-native-merged_res-25:/layout-watch-v20/abc_alert_dialog_title_material.xml",
+        "source": "com.airbnb.android.react.lottie.lottie-react-native-appcompat-1.6.1-11:/layout-watch-v20/abc_alert_dialog_title_material.xml"
+    }
+]

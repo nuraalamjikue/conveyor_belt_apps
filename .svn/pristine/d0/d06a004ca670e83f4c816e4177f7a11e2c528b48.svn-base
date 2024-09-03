@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "fantasytyx.tortoise-svn",
+    "dsznajder.es7-react-js-snippets",
+    "msjsdiag.vscode-react-native",
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "steoates.autoimport"
+  ]
+}

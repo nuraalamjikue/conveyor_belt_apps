@@ -1,0 +1,13 @@
+import React from 'react';
+import Label from '../../src/components/Label';
+import Container from '../components/Container';
+
+const SolidPackingEntryScreen = () => {
+  return (
+    <Container>
+      <Label> Solid Packing Entry Screen</Label>
+    </Container>
+  );
+};
+
+export default SolidPackingEntryScreen;

@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "com.reactnativesystemnavigationbar.react-native-system-navigation-bar-merged_res-20:/menu/example_menu.xml",
+        "source": "com.reactnativesystemnavigationbar.react-native-system-navigation-bar-core-1.7.0-5:/menu/example_menu.xml"
+    },
+    {
+        "merged": "com.reactnativesystemnavigationbar.react-native-system-navigation-bar-merged_res-20:/menu/example_menu2.xml",
+        "source": "com.reactnativesystemnavigationbar.react-native-system-navigation-bar-core-1.7.0-5:/menu/example_menu2.xml"
+    }
+]

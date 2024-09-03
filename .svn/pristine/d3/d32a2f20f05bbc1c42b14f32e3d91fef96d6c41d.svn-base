@@ -1,0 +1,650 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useIsFocused} from '@react-navigation/native';
+import React, {useEffect, useRef, useState} from 'react';
+import {ActivityIndicator, ScrollView, Text, View} from 'react-native';
+import {RNCamera} from 'react-native-camera';
+import {DataTable} from 'react-native-paper';
+import QRCodeScanner from 'react-native-qrcode-scanner';
+import Toast from 'react-native-toast-message';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {useAppTheme} from '../../../App';
+import instance from '../../axios/axiosInstance';
+import Button from '../../components/Button';
+import Container from '../../components/Container';
+import ToastMsg from '../../components/Toast';
+import {CartonDetails} from '../../interface/CartonDetails';
+import {TransferAssign} from '../../interface/TransferAssign';
+
+const CartonLineAssignScreen = () => {
+  const {COLORS, SIZES} = useAppTheme();
+  const isFocused = useIsFocused();
+  const [isOpenCamera, setIsOpenCamera] = useState(false);
+  const [isFlashOn, setIsFlashOn] = useState(false);
+  const [ScanCode, setScanCode] = useState('');
+  const [whScanCode, setWhScanCode] = useState('');
+  const [finalData, setFinalData] = useState<
+    CartonDetails[] | TransferAssign[]
+  >([]);
+  const [sendDate, setSendDate] = useState<string | null>(null);
+  const [isOpenWHCamera, setOpenWHCamera] = useState(false);
+
+  let scanner: any = useRef(null);
+
+  //wh import
+  const [warehouseLineCapacity, setWarehouseLineCapacity] = useState(0);
+  const [warehouseLineTotal, setWarehouseLineTotal] = useState(0);
+  const [totalDeliveryCtnQty, setTotalDeliveryCtnQty] = useState(0);
+  const [totalDeliveryCBM, setTotalDeliveryCBM] = useState(0);
+  const [lineAvailableCBM, setLineAvailableCBM] = useState(0);
+
+  // const [data, setData] = useState<any>([]);
+  const [ScanCodeTable, setScanCodeTable] = useState<string[]>([]);
+  const [companyOption, setCompanyOption] = useState<any>([]);
+  const [companyId, setCompanyId] = useState(0);
+  const [warehouseLineId, setWarehouseLineId] = useState(0);
+
+  const [selectedCompany, setSelectedCompany] = useState<any>([]);
+
+  var vStatus: number = 0;
+  const getCartonlistForSending = barCode => {
+    var companyId = 0;
+    var floor = 0;
+    var buyerId = 0;
+    var vScanCode = barCode;
+    var whLineId = 0;
+
+    if (vScanCode) {
+      instance
+        .post(
+          `WarehouseStockReceived/get_line_transfer_for_FG_lineManagement/${companyId}/${floor}/${buyerId}/${vScanCode}/${whLineId}`,
+        )
+        .then(res => {
+          var Result = res.data.res;
+          var vResult = JSON.parse(Result);
+          setIsOpenCamera(false);
+
+          if (Result == null) {
+            ToastMsg({
+              text1: 'Data not found!!!',
+              type: 'error',
+            });
+            setTimeout(() => {
+              setIsOpenCamera(true);
+            }, 1000);
+          } else {
+            // data2.push(vResult[0]);
+            var dataIntStatus = 0;
+
+            if (ScanCodeTable.length > 0) {
+              finalData?.map(e => {
+                if (e?.ScanCode == barCode) {
+                  vStatus = 1;
+                }
+              });
+            } else {
+              vStatus = 0;
+            }
+
+            console.log(vStatus);
+
+            if (vStatus == 1) {
+              ToastMsg({
+                text1: 'Data Already Added',
+                type: 'error',
+              });
+              setTimeout(() => {
+                setIsOpenCamera(true);
+              }, 1000);
+            } else {
+              if (lineAvailableCBM - vResult[0].CBM < 0) {
+                ToastMsg({
+                  text1: `Line doesn't have availabe...`,
+                  type: 'error',
+                });
+                setTimeout(() => {
+                  setIsOpenCamera(true);
+                }, 1000);
+              } else {
+                setFinalData(dt => [...finalData, vResult[0]]);
+                ScanCodeTable.push(vScanCode);
+                setScanCodeTable(ScanCodeTable => [...ScanCodeTable]);
+                var totalScannedCbm = vResult[0]?.CBM;
+                setLineAvailableCBM(() => lineAvailableCBM - totalScannedCbm);
+                setWarehouseLineTotal(
+                  () => warehouseLineTotal + totalScannedCbm,
+                );
+                setTotalDeliveryCBM(() => totalDeliveryCBM + totalScannedCbm);
+                setTotalDeliveryCtnQty(() => finalData?.length);
+
+                ToastMsg({
+                  text1: `Data added successfull..`,
+                  type: 'success',
+                });
+                setTimeout(() => {
+                  setIsOpenCamera(true);
+                }, 1000);
+              }
+            }
+          }
+        });
+      setScanCode('');
+    }
+  };
+
+  const loadCompany = () => {
+    return instance
+      .post(`WarehouseStockReceived/get_warehouse/${'0'}`)
+      .then(res => {
+        setCompanyOption(res?.data?.res);
+      });
+  };
+  const bindCompanyAndLine = whcode => {
+    setOpenWHCamera(false);
+    var shortName = whcode.split('/');
+    var companyId;
+    companyOption?.find(company => {
+      if (company.label == shortName[0]) {
+        setSelectedCompany({label: company.label, value: company.value});
+        companyId = company.value;
+        if (companyId > 0) {
+          instance
+            .post(`WarehouseStockReceived/get_warehouse_line/${companyId}`)
+            .then(res => {
+              var dataResp = res?.data?.res;
+              dataResp?.map(whline => {
+                if (whline.label === shortName[1]) {
+                  setCompanyId(companyId);
+                  setWarehouseLineId(whline.value);
+                  getLineCapacity(companyId, whline.value);
+                }
+              });
+            });
+        }
+      }
+    });
+  };
+
+  const getLineCapacity = (companyId, whLineId) => {
+    return instance
+      .post(
+        `WarehouseStockReceived/get_warehouse_line_capacity/${companyId}/${whLineId}`,
+      )
+      .then(res => {
+        const result = JSON.parse(res?.data?.res);
+        console.log('getLineCapacity', JSON.stringify(result, null, 2));
+        if (result !== null) {
+          setWarehouseLineCapacity(result[0].Capacity);
+          setWarehouseLineTotal(result[0].LineTotalCBM);
+          if (finalData) {
+            var CBM = 0;
+            finalData?.map(dt => {
+              //@ts-ignore
+              CBM += dt.CBM;
+            });
+            setLineAvailableCBM(
+              result[0]?.Capacity -
+                result[0]?.LineTotalCBM -
+                totalDeliveryCBM -
+                CBM,
+            );
+          } else {
+            setLineAvailableCBM(
+              result[0]?.Capacity - result[0]?.LineTotalCBM - totalDeliveryCBM,
+            );
+          }
+        } else {
+          setWarehouseLineCapacity(0);
+          setWarehouseLineTotal(0);
+          setLineAvailableCBM(0);
+          ToastMsg({
+            text1: `No Data Found...!`,
+            type: 'error',
+          });
+        }
+      });
+  };
+  const handleRowDelete = (data, cbm) => {
+    //@ts-ignore
+    let arr = finalData?.filter(item => item?.ScanCode !== data);
+
+    var totalScannedCbm = cbm;
+    setLineAvailableCBM(() => lineAvailableCBM + totalScannedCbm);
+    setWarehouseLineTotal(() => warehouseLineTotal - totalScannedCbm);
+    setTotalDeliveryCBM(() => totalDeliveryCBM - totalScannedCbm);
+    setTotalDeliveryCtnQty(() => finalData?.length - 1);
+
+    setFinalData([...arr]);
+  };
+
+  const getDate = () => {
+    let d: Date = new Date();
+
+    let month = String(d.getMonth() + 1);
+    let day = String(d.getDate());
+    const year = String(d.getFullYear());
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    const today = `${year}-${month}-${day}`;
+    setSendDate(today);
+  };
+
+  useEffect(() => {
+    getDate();
+    loadCompany();
+  }, []);
+
+  useEffect(() => {
+    if (isFocused) {
+      setIsOpenCamera(false);
+      setIsFlashOn(false);
+      setFinalData([]);
+    }
+  }, [isFocused]);
+
+  const postAllData = async () => {
+    const userId = await AsyncStorage.getItem('userId');
+    const userAddLoginId = await AsyncStorage.getItem('userAddLoginId');
+
+    let globalValue = {
+      userid: userId,
+      adloginid: userAddLoginId,
+    };
+
+    var DetailArray: TransferAssign[] = [];
+    if (companyId > 0 && warehouseLineId > 0) {
+      if (lineAvailableCBM >= 0) {
+        if (finalData?.length > 0) {
+          finalData?.forEach(da => {
+            DetailArray.push({
+              id: da?.Id,
+              //@ts-ignore
+              fglineid: da?.FgLineId,
+              stack: 0,
+              companyid: da?.CompanyId,
+              location: '',
+              fglineqrcode: '',
+              stickerqrcode: da.ScanCode,
+              cbm: parseFloat(da?.CBM),
+              transferStatus: 0,
+              active: 1,
+              userid: userId,
+              adloginid: userAddLoginId,
+            });
+          });
+          const masterData: any = {};
+          masterData.id = 0;
+          masterData.detaildata = DetailArray;
+
+          var responseCount = 0;
+          const master = {...masterData, ...globalValue};
+
+          if (finalData?.length > 0) {
+            instance
+              .post(
+                'WarehouseStockReceived/Fin_WarehouseLineManagement_transfer',
+                JSON.stringify(master),
+              )
+              .then(res => {
+                var response = res?.data?.res;
+                console.log('res?.data', res?.data);
+
+                if (response == 'updated') {
+                  responseCount += 1;
+                  setFinalData([]);
+                  setScanCode('');
+                } else {
+                  ToastMsg({
+                    text1: `Data not saved!!!`,
+                    type: 'error',
+                  });
+                }
+                if (responseCount > 0) {
+                  ToastMsg({
+                    text1: `Successfully Saved`,
+                    type: 'success',
+                  });
+                  setTimeout(function () {
+                    setFinalData([]);
+                    setScanCode('');
+                  }, 1200);
+                  vStatus = 0;
+                }
+              });
+          }
+        } else {
+          ToastMsg({
+            text1: `Details data not found!!!`,
+            type: 'error',
+          });
+        }
+      } else {
+        ToastMsg({
+          text1: `Crossed the line available ...`,
+          type: 'error',
+        });
+      }
+    }
+  };
+  return (
+    <Container>
+      <View>
+        {isOpenWHCamera && (
+          <>
+            <QRCodeScanner
+              cameraStyle={{
+                alignSelf: 'center',
+                marginTop: SIZES.height / 13,
+              }}
+              onRead={data => {
+                let res = data?.data;
+                setWhScanCode(res);
+                bindCompanyAndLine(res);
+              }}
+              flashMode={isFlashOn ? RNCamera.Constants.FlashMode.torch : null}
+              reactivate={true}
+              reactivateTimeout={5000}
+              showMarker={true}
+              ref={node => {
+                scanner = node;
+              }}
+            />
+          </>
+        )}
+        {isOpenCamera && (
+          <>
+            <QRCodeScanner
+              cameraStyle={{
+                alignSelf: 'center',
+                marginTop: SIZES.height / 13,
+              }}
+              onRead={data => {
+                setScanCode(data?.data);
+                getCartonlistForSending(data?.data);
+              }}
+              flashMode={isFlashOn ? RNCamera.Constants.FlashMode.torch : null}
+              bottomContent={
+                <View>
+                  <Text style={{color: COLORS.white}}>
+                    Scan result is : {ScanCode}
+                  </Text>
+                </View>
+              }
+              reactivate={true}
+              reactivateTimeout={5000}
+              showMarker={true}
+              ref={node => {
+                scanner = node;
+              }}
+            />
+          </>
+        )}
+      </View>
+      <View>
+        {!isOpenCamera && !isOpenWHCamera ? (
+          <>
+            <ScrollView
+              contentContainerStyle={{
+                flexGrow: 1,
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                // backgroundColor: COLORS.gray,
+              }}
+              horizontal={true}>
+              <Button
+                borderRadius={5}
+                width={SIZES.width / 5}
+                height={SIZES.height / 22}
+                style={{margin: 10}}
+                textSize={14}
+                textColor={COLORS.white}
+                bgColor={COLORS.blue}
+                onPress={() => {
+                  setOpenWHCamera(!isOpenWHCamera);
+                }}>
+                WH Scan
+              </Button>
+              <Button
+                borderRadius={5}
+                width={SIZES.width / 4}
+                height={SIZES.height / 22}
+                style={{margin: 10}}
+                textSize={14}
+                textColor={COLORS.white}
+                bgColor={COLORS.green}
+                onPress={() => {
+                  setIsOpenCamera(true);
+                }}>
+                Carton Scan
+              </Button>
+              <Button
+                borderRadius={5}
+                width={SIZES.width / 6}
+                height={SIZES.height / 22}
+                style={{margin: 10}}
+                textSize={14}
+                textColor={COLORS.white}
+                bgColor={COLORS.red}
+                onPress={() => {
+                  setFinalData([]);
+                  setScanCode('');
+                }}>
+                Reset
+              </Button>
+              {finalData && finalData?.length > 0 && (
+                <Button
+                  borderRadius={5}
+                  width={SIZES.width / 6}
+                  height={SIZES.height / 22}
+                  style={{margin: 10}}
+                  textSize={14}
+                  textColor={COLORS.white}
+                  bgColor={COLORS.primary}
+                  onPress={() => {
+                    postAllData();
+                  }}>
+                  Submit
+                </Button>
+              )}
+            </ScrollView>
+
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                backgroundColor: COLORS.gray,
+              }}>
+              <Button
+                borderRadius={5}
+                width={SIZES.width / 4}
+                height={SIZES.height / 22}
+                style={{margin: 10}}
+                textSize={14}
+                textColor={COLORS.white}
+                bgColor={COLORS.orange}
+                onPress={() => console.log('Capacity btn press')}>
+                Capacity
+                {'\n'} {warehouseLineCapacity?.toFixed(3)}
+              </Button>
+              <Button
+                borderRadius={5}
+                width={SIZES.width / 4}
+                height={SIZES.height / 22}
+                style={{margin: 10}}
+                textSize={14}
+                textColor={COLORS.white}
+                bgColor={COLORS.sayn}
+                onPress={() => console.log('CBM btn press')}>
+                CBM
+                {'\n'} {warehouseLineTotal?.toFixed(3)}
+              </Button>
+              <Button
+                borderRadius={5}
+                width={SIZES.width / 4}
+                height={SIZES.height / 22}
+                style={{margin: 10}}
+                textSize={14}
+                textColor={COLORS.white}
+                bgColor={COLORS.sunColor}
+                onPress={() => console.log('AVL. CBM btn press')}>
+                AVL. CBM
+                {'\n'} {lineAvailableCBM?.toFixed(3)}
+              </Button>
+            </View>
+            <ScrollView>
+              <ScrollView horizontal={true}>
+                <DataTable
+                  style={{
+                    width: SIZES.width / 0.6,
+                    height: SIZES.height / 1.3,
+                  }}>
+                  <DataTable.Header>
+                    <DataTable.Title style={{flex: 0.2}}>SL</DataTable.Title>
+                    <DataTable.Title style={{flex: 0.5}}>
+                      ScanCode
+                    </DataTable.Title>
+                    <DataTable.Title style={{flex: 0.5, paddingLeft: 15}}>
+                      Buyer
+                    </DataTable.Title>
+                    <DataTable.Title style={{flex: 0.5}}>
+                      Season
+                    </DataTable.Title>
+                    <DataTable.Title style={{flex: 0.5}}>Style</DataTable.Title>
+                    <DataTable.Title style={{flex: 0.6}}>PoNo</DataTable.Title>
+                    <DataTable.Title style={{flex: 0.5}}>Color</DataTable.Title>
+                    <DataTable.Title style={{flex: 0.3}}>Size</DataTable.Title>
+                    <DataTable.Title style={{flex: 0.2}}>Qty.</DataTable.Title>
+                    <DataTable.Title style={{flex: 0}}>Action</DataTable.Title>
+                  </DataTable.Header>
+
+                  <ScrollView>
+                    {finalData === null ||
+                      (finalData === undefined && (
+                        <ActivityIndicator
+                          size="large"
+                          color={COLORS.primary}
+                        />
+                      ))}
+                    {finalData.reverse()?.map((item, id) => (
+                      <DataTable.Row key={id}>
+                        <DataTable.Cell
+                          style={{flex: 0.1}}
+                          textStyle={{fontSize: 12}}>
+                          {finalData?.length - id}
+                        </DataTable.Cell>
+                        <DataTable.Cell
+                          style={{flex: 0.4}}
+                          numeric
+                          textStyle={{fontSize: 12}}>
+                          {item?.ScanCode}
+                        </DataTable.Cell>
+                        <DataTable.Cell
+                          style={{flex: 0.4}}
+                          numeric
+                          textStyle={{fontSize: 12}}>
+                          {item?.Buyer}
+                        </DataTable.Cell>
+                        <DataTable.Cell
+                          numeric
+                          style={{flex: 0.5}}
+                          textStyle={{fontSize: 12}}>
+                          {item?.Season}
+                        </DataTable.Cell>
+                        <DataTable.Cell
+                          numeric
+                          style={{flex: 0.5}}
+                          textStyle={{fontSize: 12}}>
+                          {item?.Style}
+                        </DataTable.Cell>
+                        <DataTable.Cell
+                          numeric
+                          style={{flex: 0.6}}
+                          textStyle={{fontSize: 12}}>
+                          {item?.PoNo}
+                        </DataTable.Cell>
+                        <DataTable.Cell
+                          numeric
+                          style={{flex: 0.6}}
+                          textStyle={{fontSize: 12}}>
+                          {item?.ColorId}
+                        </DataTable.Cell>
+                        <DataTable.Cell
+                          numeric
+                          style={{flex: 0.4}}
+                          textStyle={{fontSize: 12}}>
+                          {item?.SizeId}
+                        </DataTable.Cell>
+                        <DataTable.Cell
+                          numeric
+                          style={{flex: 0.4}}
+                          textStyle={{fontSize: 12}}>
+                          {item?.Carton}
+                        </DataTable.Cell>
+                        <DataTable.Cell
+                          numeric
+                          style={{flex: 0.3}}
+                          textStyle={{fontSize: 12}}>
+                          <Icon
+                            style={{padding: 10}}
+                            onPress={() => {
+                              handleRowDelete(item?.ScanCode, item?.CBM);
+                            }}
+                            name="delete-circle-outline"
+                            size={24}
+                            color="red"
+                          />
+                        </DataTable.Cell>
+                      </DataTable.Row>
+                    ))}
+                  </ScrollView>
+                </DataTable>
+              </ScrollView>
+            </ScrollView>
+          </>
+        ) : (
+          <View
+            style={{
+              position: 'absolute',
+              top: SIZES.height / 1.35,
+              alignSelf: 'center',
+              flexDirection: 'row',
+              justifyContent: 'space-around',
+            }}>
+            <Button
+              borderRadius={5}
+              width={SIZES.width / 4}
+              height={SIZES.height / 22}
+              textSize={14}
+              textColor={COLORS.white}
+              bgColor={COLORS.reset}
+              onPress={() => {
+                setScanCode('');
+                setIsOpenCamera(false);
+                setOpenWHCamera(false);
+              }}>
+              Close Camera
+            </Button>
+
+            <Button
+              borderRadius={5}
+              width={SIZES.width / 4}
+              height={SIZES.height / 22}
+              textSize={14}
+              textColor={COLORS.white}
+              bgColor={isFlashOn ? COLORS.green : COLORS.primary}
+              style={{marginLeft: 15}}
+              onPress={() => {
+                setIsFlashOn(!isFlashOn);
+              }}>
+              {isFlashOn ? 'Flash Off' : 'Flash On'}
+            </Button>
+          </View>
+        )}
+        <Toast position="top" topOffset={0} />
+      </View>
+    </Container>
+  );
+};
+
+export default CartonLineAssignScreen;

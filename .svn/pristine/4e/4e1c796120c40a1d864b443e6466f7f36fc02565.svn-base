@@ -1,0 +1,13 @@
+import React from 'react';
+import {Text} from 'react-native';
+import Container from '../components/Container';
+
+const OperationalExcellenceSetupScreen = () => {
+  return (
+    <Container>
+      <Text>OperationalExcellenceSetupScreen</Text>
+    </Container>
+  );
+};
+
+export default OperationalExcellenceSetupScreen;

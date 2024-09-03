@@ -1,0 +1,151 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import jwt_decode from 'jwt-decode';
+import React, {useEffect, useState} from 'react';
+import {StyleSheet, View} from 'react-native';
+import {TextInput} from 'react-native-paper';
+import {useAppContext} from '../store/AppContext';
+import {useAppTheme} from '../../App';
+import instance from '../axios/axiosInstance';
+import Alert from '../components/Alert';
+import Button from '../components/Button';
+import Footer from '../components/Footer';
+import Header from '../components/Header';
+import MyStatusBar from '../components/StatusBar';
+import ToastMsg from '../components/Toast';
+import NetInfo from '@react-native-community/netinfo';
+import Toast from 'react-native-toast-message';
+import {useIsFocused} from '@react-navigation/native';
+
+const LoginScreen = ({navigation}) => {
+  const {SIZES, COLORS} = useAppTheme();
+  const isFocused = useIsFocused();
+  const [username, setUsername] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [isAlertOpen, setIsAlertOpen] = useState<Boolean>(false);
+
+  const {setUserId, setAddLoginId} = useAppContext();
+
+  const loginHandler = async (username, password) => {
+    const data = JSON.stringify({username, password});
+    await instance
+      .post('Login/DoLogin', data)
+      .then(async res => {
+        let token = res.data.token;
+        if (token) {
+          console.log(token);
+          instance.interceptors.request.use(
+            function (config) {
+              if (token) {
+                config.headers['Authorization'] = 'Bearer ' + token;
+              }
+              return config;
+            },
+            function (error) {
+              return Promise.reject(error);
+            },
+          );
+          let decoded: any = jwt_decode(token);
+          setUserId(decoded?.userid);
+          setAddLoginId(decoded?.adloginid);
+          AsyncStorage.setItem('token', token);
+          AsyncStorage.setItem('userId', decoded?.userid);
+          AsyncStorage.setItem('userAddLoginId', decoded?.adloginid);
+          AsyncStorage.setItem('expDate', JSON.stringify(decoded?.exp));
+          navigation.navigate('Sidebar');
+        } else {
+          setIsAlertOpen(true);
+        }
+      })
+      .catch(err => {
+        if (err) {
+          console.log(err);
+          setIsAlertOpen(true);
+        }
+      });
+  };
+
+  const handleDataReceived = data => {
+    setIsAlertOpen(data);
+  };
+
+  useEffect(() => {
+    if (isFocused) {
+      // Unsubscribe
+      unsubscribe();
+    }
+  }, [isFocused]);
+
+  // Subscribe
+  const unsubscribe = NetInfo.addEventListener(state => {
+    if (!state.isConnected) {
+      ToastMsg({
+        text1: 'No internet connection',
+        text2: 'Please add internet connection',
+        type: 'error',
+        time: 5000,
+      });
+    }
+  });
+
+  return (
+    <View
+      style={{
+        backgroundColor: COLORS.white,
+        flex: 1,
+      }}>
+      <MyStatusBar backgroundColor={COLORS.primary} barStyle="light-content" />
+      <Header />
+
+      <Toast position="top" topOffset={40} />
+
+      <View style={{height: SIZES.height / 1.85, margin: SIZES.width / 13}}>
+        <TextInput
+          style={{backgroundColor: COLORS.white}}
+          label="Username or Employee ID"
+          value={username}
+          underlineColor={COLORS.primary}
+          onChangeText={text => setUsername(text)}
+          activeUnderlineColor={COLORS.primary}
+        />
+        <TextInput
+          style={{backgroundColor: COLORS.white, marginVertical: 25}}
+          label="Password"
+          value={password}
+          secureTextEntry={true}
+          underlineColor={COLORS.primary}
+          onChangeText={text => setPassword(text)}
+          activeUnderlineColor={COLORS.primary}
+        />
+        <Button
+          borderRadius={5}
+          width={SIZES.width / 3.5}
+          height={SIZES.height / 20}
+          textSize={14}
+          textColor={COLORS.white}
+          fontWeight="bold"
+          style={[styles.loginBTN]}
+          bgColor={COLORS.primary}
+          onPress={() => loginHandler(username, password)}>
+          Login
+        </Button>
+      </View>
+      <Alert
+        onDataReceived={handleDataReceived}
+        isAlertOpen={isAlertOpen}
+        title="Login faild!"
+        message='"Invalid User Info!"'
+        cancel="Cancel"
+        confirmText="Retry login"
+      />
+      <Footer />
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  loginBTN: {
+    alignSelf: 'center',
+  },
+});
+
+export default LoginScreen;

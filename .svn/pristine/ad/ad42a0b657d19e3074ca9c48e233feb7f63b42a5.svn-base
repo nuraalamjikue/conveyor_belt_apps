@@ -1,0 +1,41 @@
+import React from 'react';
+import {View} from 'react-native';
+import AwesomeAlert from 'react-native-awesome-alerts';
+import {useAppTheme} from '../../App';
+
+const Alert = ({
+  isAlertOpen,
+  onDataReceived,
+  title,
+  message,
+  cancel,
+  confirmText,
+}) => {
+  const {COLORS} = useAppTheme();
+  return (
+    <View>
+      <AwesomeAlert
+        show={isAlertOpen}
+        showProgress={false}
+        title={title}
+        message={message}
+        closeOnTouchOutside={true}
+        closeOnHardwareBackPress={false}
+        showCancelButton={true}
+        showConfirmButton={true}
+        cancelText={cancel}
+        confirmText={confirmText}
+        confirmButtonColor={COLORS.primary}
+        cancelButtonColor="red"
+        onCancelPressed={() => {
+          onDataReceived(false);
+        }}
+        onConfirmPressed={() => {
+          onDataReceived(false);
+        }}
+      />
+    </View>
+  );
+};
+
+export default Alert;

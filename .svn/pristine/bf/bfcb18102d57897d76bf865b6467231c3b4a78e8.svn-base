@@ -1,0 +1,13 @@
+import React from 'react';
+import {Text} from 'react-native';
+import Container from '../components/Container';
+
+const AssortPackingEntryScreen = () => {
+  return (
+    <Container>
+      <Text>Assort Packing Entry Screen</Text>
+    </Container>
+  );
+};
+
+export default AssortPackingEntryScreen;

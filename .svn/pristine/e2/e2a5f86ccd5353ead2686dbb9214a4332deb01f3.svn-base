@@ -1,0 +1,6 @@
+//  const REACT_NATIVE_APP_BACKEND_LIVE_API = 'http://192.168.15.15:30/api/';
+// const REACT_NATIVE_APP_BACKEND_LIVE_API = 'http://192.168.15.253:30/api/';
+
+const REACT_NATIVE_APP_BACKEND_LIVE_API = 'http://localhost:59389/api/';
+
+export {REACT_NATIVE_APP_BACKEND_LIVE_API};

@@ -1,0 +1,26 @@
+[
+    {
+        "merged": "com.airbnb.android.react.lottie.lottie-react-native-merged_res-25:/animator/fragment_fade_exit.xml",
+        "source": "com.airbnb.android.react.lottie.lottie-react-native-fragment-1.3.6-1:/animator/fragment_fade_exit.xml"
+    },
+    {
+        "merged": "com.airbnb.android.react.lottie.lottie-react-native-merged_res-25:/animator/fragment_fade_enter.xml",
+        "source": "com.airbnb.android.react.lottie.lottie-react-native-fragment-1.3.6-1:/animator/fragment_fade_enter.xml"
+    },
+    {
+        "merged": "com.airbnb.android.react.lottie.lottie-react-native-merged_res-25:/animator/fragment_open_enter.xml",
+        "source": "com.airbnb.android.react.lottie.lottie-react-native-fragment-1.3.6-1:/animator/fragment_open_enter.xml"
+    },
+    {
+        "merged": "com.airbnb.android.react.lottie.lottie-react-native-merged_res-25:/animator/fragment_close_exit.xml",
+        "source": "com.airbnb.android.react.lottie.lottie-react-native-fragment-1.3.6-1:/animator/fragment_close_exit.xml"
+    },
+    {
+        "merged": "com.airbnb.android.react.lottie.lottie-react-native-merged_res-25:/animator/fragment_open_exit.xml",
+        "source": "com.airbnb.android.react.lottie.lottie-react-native-fragment-1.3.6-1:/animator/fragment_open_exit.xml"
+    },
+    {
+        "merged": "com.airbnb.android.react.lottie.lottie-react-native-merged_res-25:/animator/fragment_close_enter.xml",
+        "source": "com.airbnb.android.react.lottie.lottie-react-native-fragment-1.3.6-1:/animator/fragment_close_enter.xml"
+    }
+]

@@ -1,0 +1,451 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useIsFocused} from '@react-navigation/native';
+import React, {useEffect, useRef, useState} from 'react';
+import {ActivityIndicator, ScrollView, Text, View} from 'react-native';
+import {RNCamera} from 'react-native-camera';
+import {DataTable} from 'react-native-paper';
+import QRCodeScanner from 'react-native-qrcode-scanner';
+import Toast from 'react-native-toast-message';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {useAppTheme} from '../../../App';
+import instance from '../../axios/axiosInstance';
+import Button from '../../components/Button';
+import Container from '../../components/Container';
+import ToastMsg from '../../components/Toast';
+import {CartonDetails} from '../../interface/CartonDetails';
+import {TransferAssign} from '../../interface/TransferAssign';
+
+const TransferAssignScreen = () => {
+  const {COLORS, SIZES} = useAppTheme();
+  const isFocused = useIsFocused();
+  const [isOpenCamera, setIsOpenCamera] = useState(false);
+  const [isFlashOn, setIsFlashOn] = useState(false);
+  const [ScanCode, setScanCode] = useState('');
+  const [finalData, setFinalData] = useState<
+    TransferAssign[] | CartonDetails[]
+  >([]);
+  const [sendDate, setSendDate] = useState<string | null>(null);
+
+  let scanner: any = useRef(null);
+
+  const [ScanCodeTable, setScanCodeTable] = useState<string[]>([]);
+  const [lineAvailableCBM, setLineAvailableCBM] = useState(0);
+  const [totalDeliveryCBM, setTotalDeliveryCBM] = useState(0);
+  const [totalDeliveryCtnQty, setTotalDeliveryCtnQty] = useState(0);
+
+  var vStatus: number = 0;
+  const getCartonlistForSending = barCode => {
+    var vScanCode = barCode;
+
+    if (vScanCode) {
+      instance
+        .post(`WarehouseStockReceived/get_line_transfer_for_FG/${vScanCode}`)
+        .then(res => {
+          var Result = res.data.res;
+          var vResult = JSON.parse(Result);
+          setIsOpenCamera(false);
+
+          if (Result == null) {
+            ToastMsg({
+              text1: 'Data not found!!!',
+              type: 'info',
+            });
+            setTimeout(() => {
+              setIsOpenCamera(true);
+            }, 1000);
+          } else {
+            if (finalData.length > 0) {
+              finalData.map(e => {
+                if (e.ScanCode == vScanCode) {
+                  vStatus = 1;
+                }
+              });
+            } else {
+              vStatus = 0;
+            }
+
+            console.log(vStatus);
+
+            if (vStatus == 1) {
+              ToastMsg({
+                text1: 'Data Already Added',
+                type: 'info',
+              });
+              setTimeout(() => {
+                setIsOpenCamera(true);
+              }, 1000);
+            } else {
+              setFinalData(data => [...finalData, vResult[0]]);
+              ScanCodeTable.push(vScanCode);
+              setScanCodeTable(ScanCodeTable => [...ScanCodeTable]);
+              var totalScannedCbm = vResult[0].CBM;
+              setLineAvailableCBM(() => lineAvailableCBM - totalScannedCbm);
+              setTotalDeliveryCBM(() => totalDeliveryCBM + totalScannedCbm);
+              setTotalDeliveryCtnQty(() => finalData?.length);
+              ToastMsg({
+                text1: 'Carton added successfully',
+                type: 'success',
+              });
+              setTimeout(() => {
+                setIsOpenCamera(true);
+              }, 1000);
+            }
+          }
+        });
+      setScanCode('');
+    }
+  };
+  const handleRowDelete = (ScanCode, cbm) => {
+    //@ts-ignore
+    let arr = finalData.filter(item => item?.ScanCode !== ScanCode);
+
+    var totalScannedCbm = cbm;
+    setTotalDeliveryCBM(() => totalDeliveryCBM - totalScannedCbm);
+    setTotalDeliveryCtnQty(() => finalData?.length - 1);
+    setFinalData([...arr]);
+  };
+
+  const getDate = () => {
+    let d: Date = new Date();
+
+    let month = String(d.getMonth() + 1);
+    let day = String(d.getDate());
+    const year = String(d.getFullYear());
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    const today = `${year}-${month}-${day}`;
+    setSendDate(today);
+  };
+
+  useEffect(() => {
+    getDate();
+  }, []);
+
+  useEffect(() => {
+    if (isFocused) {
+      setIsOpenCamera(false);
+      setIsFlashOn(false);
+      setFinalData([]);
+    }
+  }, [isFocused]);
+
+  const postAllData = async () => {
+    let DetailArray: any[] = [];
+
+    const userId = await AsyncStorage.getItem('userId');
+    const userAddLoginId = await AsyncStorage.getItem('userAddLoginId');
+
+    let globalValue = {
+      userid: userId,
+      adloginid: userAddLoginId,
+    };
+
+    if (finalData.length > 0) {
+      finalData.forEach(da => {
+        DetailArray?.push({
+          id: da.Id,
+          fglineid: da.FgLineId,
+          stack: da.Stack,
+          companyid: da.CompanyId,
+          location: '',
+          fglineqrcode: '',
+          stickerqrcode: da.ScanCode,
+          cbm: parseFloat(da.CBM),
+          transferStatus: 1,
+          active: 1,
+          userid: globalValue.userid,
+          adloginid: globalValue.adloginid,
+        });
+      });
+      const masterData: any = {};
+      masterData.id = 0;
+      masterData.detaildata = DetailArray;
+
+      var responseCount = 0;
+      const master = {...masterData, ...globalValue};
+
+      if (finalData.length > 0) {
+        instance
+          .post(
+            'WarehouseStockReceived/Fin_WarehouseLineManagement_transfer',
+
+            JSON.stringify(master),
+          )
+          .then(res => {
+            var response = res?.data?.res;
+            console.log('res.data', JSON.stringify(res?.data, null, 2));
+
+            if (response == 'updated') {
+              responseCount += 1;
+              setFinalData([]);
+            } else {
+              ToastMsg({
+                text1: 'Data not saved!!!',
+                type: 'error',
+              });
+            }
+            if (responseCount > 0) {
+              ToastMsg({
+                text1: 'Successfully Updated...',
+                type: 'success',
+              });
+              vStatus = 0;
+              // resetForm();
+            }
+          })
+          .catch(e => {
+            console.log(e);
+          });
+      }
+    } else {
+      ToastMsg({
+        text1: 'Details data not found!!!',
+        type: 'error',
+      });
+    }
+  };
+
+  return (
+    <Container>
+      <View>
+        {isOpenCamera && (
+          <>
+            <QRCodeScanner
+              cameraStyle={{
+                alignSelf: 'center',
+              }}
+              onRead={data => {
+                setScanCode(data?.data);
+                getCartonlistForSending(data?.data);
+              }}
+              flashMode={isFlashOn ? RNCamera.Constants.FlashMode.torch : null}
+              bottomContent={
+                <View>
+                  <Text style={{color: COLORS.white}}>
+                    Scan result is : {ScanCode}
+                  </Text>
+                </View>
+              }
+              reactivate={true}
+              reactivateTimeout={5000}
+              showMarker={true}
+              ref={node => {
+                scanner = node;
+              }}
+            />
+          </>
+        )}
+      </View>
+      <View>
+        {!isOpenCamera ? (
+          <>
+            <View
+              style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+              <Button
+                borderRadius={5}
+                width={SIZES.width / 4}
+                height={SIZES.height / 22}
+                style={{margin: 10}}
+                textSize={14}
+                textColor={COLORS.white}
+                bgColor={COLORS.green}
+                onPress={() => {
+                  setIsOpenCamera(true);
+                }}>
+                Scan QR
+              </Button>
+              <Button
+                borderRadius={5}
+                width={SIZES.width / 4}
+                height={SIZES.height / 22}
+                style={{margin: 10}}
+                textSize={14}
+                textColor={COLORS.white}
+                bgColor={COLORS.reset}
+                onPress={() => {
+                  setFinalData([]);
+                  setScanCode('');
+                }}>
+                Reset
+              </Button>
+              {finalData && finalData?.length > 0 && (
+                <Button
+                  borderRadius={5}
+                  width={SIZES.width / 4}
+                  height={SIZES.height / 22}
+                  style={{margin: 10}}
+                  textSize={14}
+                  textColor={COLORS.white}
+                  bgColor={COLORS.primary}
+                  onPress={() => {
+                    postAllData();
+                  }}>
+                  Submit
+                </Button>
+              )}
+            </View>
+            <ScrollView>
+              <ScrollView horizontal={true}>
+                <DataTable
+                  style={{
+                    width: SIZES.width / 0.6,
+                    height: SIZES.height / 1.3,
+                  }}>
+                  <DataTable.Header>
+                    <DataTable.Title style={{flex: 0.2}}>SL</DataTable.Title>
+                    <DataTable.Title style={{flex: 0.5}}>
+                      ScanCode
+                    </DataTable.Title>
+                    <DataTable.Title style={{flex: 0.5, paddingLeft: 15}}>
+                      Buyer
+                    </DataTable.Title>
+                    <DataTable.Title style={{flex: 0.5}}>
+                      Season
+                    </DataTable.Title>
+                    <DataTable.Title style={{flex: 0.5}}>Style</DataTable.Title>
+                    <DataTable.Title style={{flex: 0.5}}>CBM</DataTable.Title>
+                    <DataTable.Title style={{flex: 0.6}}>PoNo</DataTable.Title>
+                    <DataTable.Title style={{flex: 0.5}}>Color</DataTable.Title>
+                    <DataTable.Title style={{flex: 0.3}}>Size</DataTable.Title>
+                    <DataTable.Title style={{flex: 0.2}}>Qty.</DataTable.Title>
+                    <DataTable.Title style={{flex: 0}}>Action</DataTable.Title>
+                  </DataTable.Header>
+                  <ScrollView>
+                    {finalData === null ||
+                      (finalData === undefined && (
+                        <ActivityIndicator
+                          size="large"
+                          color={COLORS.primary}
+                        />
+                      ))}
+                    {finalData.reverse()?.map((item, id) => (
+                      <DataTable.Row key={id}>
+                        <DataTable.Cell
+                          style={{flex: 0.1}}
+                          textStyle={{fontSize: 12}}>
+                          {finalData?.length - id}
+                        </DataTable.Cell>
+                        <DataTable.Cell
+                          style={{flex: 0.4}}
+                          numeric
+                          textStyle={{fontSize: 12}}>
+                          {item?.ScanCode}
+                        </DataTable.Cell>
+                        <DataTable.Cell
+                          style={{flex: 0.4}}
+                          numeric
+                          textStyle={{fontSize: 12}}>
+                          {item?.Buyer}
+                        </DataTable.Cell>
+                        <DataTable.Cell
+                          numeric
+                          style={{flex: 0.5}}
+                          textStyle={{fontSize: 12}}>
+                          {item?.Season}
+                        </DataTable.Cell>
+                        <DataTable.Cell
+                          numeric
+                          style={{flex: 0.5}}
+                          textStyle={{fontSize: 12}}>
+                          {item?.Style}
+                        </DataTable.Cell>
+                        <DataTable.Cell
+                          numeric
+                          style={{flex: 0.5}}
+                          textStyle={{fontSize: 12}}>
+                          {item?.CBM?.toFixed(3)}
+                        </DataTable.Cell>
+                        <DataTable.Cell
+                          numeric
+                          style={{flex: 0.6}}
+                          textStyle={{fontSize: 12}}>
+                          {item?.PoNo}
+                        </DataTable.Cell>
+                        <DataTable.Cell
+                          numeric
+                          style={{flex: 0.6}}
+                          textStyle={{fontSize: 12}}>
+                          {item?.ColorId}
+                        </DataTable.Cell>
+                        <DataTable.Cell
+                          numeric
+                          style={{flex: 0.4}}
+                          textStyle={{fontSize: 12}}>
+                          {item?.SizeId}
+                        </DataTable.Cell>
+                        <DataTable.Cell
+                          numeric
+                          style={{flex: 0.4}}
+                          textStyle={{fontSize: 12}}>
+                          {item?.Carton}
+                        </DataTable.Cell>
+
+                        <DataTable.Cell
+                          numeric
+                          style={{flex: 0.3}}
+                          textStyle={{fontSize: 12}}>
+                          <Icon
+                            style={{padding: 10}}
+                            onPress={() => {
+                              handleRowDelete(item?.ScanCode, item?.CBM);
+                            }}
+                            name="delete-circle-outline"
+                            size={24}
+                            color="red"
+                          />
+                        </DataTable.Cell>
+                      </DataTable.Row>
+                    ))}
+                  </ScrollView>
+                </DataTable>
+              </ScrollView>
+            </ScrollView>
+          </>
+        ) : (
+          <View
+            style={{
+              position: 'absolute',
+              top: SIZES.height / 1.35,
+              alignSelf: 'center',
+              flexDirection: 'row',
+              justifyContent: 'space-around',
+            }}>
+            <Button
+              borderRadius={5}
+              width={SIZES.width / 4}
+              height={SIZES.height / 22}
+              textSize={14}
+              textColor={COLORS.white}
+              bgColor={COLORS.reset}
+              onPress={() => {
+                setScanCode('');
+                setIsOpenCamera(false);
+              }}>
+              Close Camera
+            </Button>
+
+            <Button
+              borderRadius={5}
+              width={SIZES.width / 4}
+              height={SIZES.height / 22}
+              textSize={14}
+              textColor={COLORS.white}
+              bgColor={isFlashOn ? COLORS.green : COLORS.primary}
+              style={{marginLeft: 15}}
+              onPress={() => {
+                setIsFlashOn(!isFlashOn);
+              }}>
+              {isFlashOn ? 'Flash Off' : 'Flash On'}
+            </Button>
+          </View>
+        )}
+
+        <Toast position="top" topOffset={0} />
+      </View>
+    </Container>
+  );
+};
+
+export default TransferAssignScreen;

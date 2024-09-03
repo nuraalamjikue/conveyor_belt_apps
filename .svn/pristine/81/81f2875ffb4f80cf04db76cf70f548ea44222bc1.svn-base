@@ -1,0 +1,122 @@
+import React from 'react';
+import {StyleSheet, View} from 'react-native';
+import {TouchableOpacity} from 'react-native-gesture-handler';
+import {List, useTheme} from 'react-native-paper';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+
+const NestedCheckbox = () => {
+  const {colors} = useTheme();
+  return (
+    <View style={{width: '50%'}}>
+      <List.AccordionGroup
+        titleStyle={{fontSize: 18}}
+        key={1}
+        expanded={false}
+        id={1}>
+        <TouchableOpacity key={2} activeOpacity={1}>
+          <List.Accordion
+            expanded={false}
+            left={props => (
+              <Icon
+                {...props}
+                name="checkbox-outline"
+                size={20}
+                color={colors.primary}
+                onPress={() => {
+                  console.log('test log');
+                }}
+              />
+            )}
+            titleStyle={{
+              fontSize: 14,
+              fontWeight: '500',
+            }}
+            title={'firstLayer?.title'}
+            style={[
+              {
+                height: 60,
+              },
+              styles.borderColour,
+            ]}
+            key={3}
+            id={3}>
+            <List.AccordionGroup title="Accordion 4" key={4} id={4}>
+              <TouchableOpacity activeOpacity={1} key={5}>
+                <List.Accordion
+                  expanded={false}
+                  right={props => {
+                    <Icon
+                      {...props}
+                      name="checkbox-outline"
+                      size={50}
+                      color={colors.primary}
+                      onPress={() => {
+                        console.log('test log');
+                      }}
+                    />;
+                  }}
+                  left={props => (
+                    <Icon
+                      {...props}
+                      name="checkbox-outline"
+                      size={20}
+                      color={colors.primary}
+                    />
+                  )}
+                  style={styles.borderColour}
+                  title={'secondLayer.title'}
+                  titleStyle={{
+                    fontSize: 12,
+                    fontWeight: '700',
+                  }}
+                  id={5}>
+                  <View key={6}>
+                    <TouchableOpacity activeOpacity={1} key={6}>
+                      <List.Accordion
+                        titleStyle={{
+                          fontSize: 12,
+                          color: colors.primary,
+                        }}
+                        right={props => {
+                          <Icon
+                            {...props}
+                            name="checkbox-outline"
+                            size={50}
+                            color={colors.primary}
+                            onPress={() => {
+                              console.log('test log');
+                            }}
+                          />;
+                        }}
+                        left={props => (
+                          <Icon
+                            {...props}
+                            name="checkbox-outline"
+                            size={20}
+                            color={colors.primary}
+                          />
+                        )}
+                        style={styles.borderColour}
+                        title={'thirdLayer.title'}
+                        id={6}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </List.Accordion>
+              </TouchableOpacity>
+            </List.AccordionGroup>
+          </List.Accordion>
+        </TouchableOpacity>
+      </List.AccordionGroup>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  borderColour: {
+    borderBottomColor: '#00bbda',
+    borderBottomWidth: 1,
+  },
+});
+
+export default NestedCheckbox;

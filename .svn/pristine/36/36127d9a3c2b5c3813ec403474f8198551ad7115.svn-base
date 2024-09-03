@@ -1,0 +1,60 @@
+import NetInfo from '@react-native-community/netinfo';
+import {useIsFocused} from '@react-navigation/native';
+import React, {useEffect} from 'react';
+import {StyleSheet, View} from 'react-native';
+import Toast from 'react-native-toast-message';
+import {useAppTheme} from '../../App';
+import Container from '../../src/components/Container';
+import Label from '../components/Label';
+import ToastMsg from '../components/Toast';
+
+const DashboardScreen = () => {
+  const {COLORS} = useAppTheme();
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    if (isFocused) {
+      // Unsubscribe handler called
+      unsubscribe();
+    }
+  }, [isFocused]);
+
+  // Subscribe handler
+  const unsubscribe = NetInfo.addEventListener(state => {
+    if (!state.isConnected) {
+      ToastMsg({
+        text1: 'No internet connection',
+        text2: 'Please add internet connection',
+        type: 'error',
+        time: 5000,
+      });
+    }
+  });
+
+  return (
+    <Container>
+      <Toast position="top" topOffset={10} />
+      <View>
+        <Label style={[styles.textBold, {color: COLORS.primary}]}>
+          Welcome to Snowtex
+        </Label>
+      </View>
+    </Container>
+  );
+};
+
+const styles = StyleSheet.create({
+  textBold: {
+    fontSize: 22,
+    justifyContent: 'center',
+    padding: 10,
+  },
+  tinyLogo: {
+    width: '50%',
+    height: '50%',
+    alignSelf: 'center',
+    marginTop: '20%',
+  },
+});
+
+export default DashboardScreen;

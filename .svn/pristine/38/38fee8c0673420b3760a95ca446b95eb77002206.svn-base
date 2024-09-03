@@ -1,0 +1,23 @@
+import React from 'react';
+import {StatusBar} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
+
+export type Props = {
+  backgroundColor: any;
+  barStyle: any;
+};
+
+const STATUSBAR_HEIGHT = StatusBar.currentHeight;
+
+const MyStatusBar: React.FC<Props> = ({backgroundColor, ...props}) => (
+  <SafeAreaView style={{backgroundColor, height: STATUSBAR_HEIGHT}}>
+    <StatusBar
+      animated={true}
+      translucent
+      backgroundColor={backgroundColor}
+      {...props}
+    />
+  </SafeAreaView>
+);
+
+export default MyStatusBar;

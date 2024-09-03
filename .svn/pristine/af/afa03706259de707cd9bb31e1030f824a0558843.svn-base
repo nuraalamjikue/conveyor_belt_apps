@@ -1,0 +1,38 @@
+// AppContext.js
+import React, {createContext, useContext, useState} from 'react';
+import useContextSelector from 'use-context-selector';
+
+// Define your context
+const AppContext = createContext();
+
+// Create a custom provider component
+function AppProvider({children}) {
+  const [userId, setUserId] = useState('');
+  const [userAddLoginId, setAddLoginId] = useState('');
+
+  // Add the actions to the context value
+  const contextValue = {
+    userId,
+    setUserId,
+    userAddLoginId,
+    setAddLoginId,
+  };
+
+  // Return the context provider with its value
+  return (
+    <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>
+  );
+}
+
+// Define a custom hook for using the context
+function useAppContext(selector) {
+  const context = useContext(AppContext);
+  if (!context) {
+    throw new Error('useAppContext must be used within an AppProvider');
+  }
+
+  // Use useContextSelector to select specific parts of the context state
+  return selector ? useContextSelector(AppContext, selector) : context;
+}
+
+export {AppProvider, useAppContext};

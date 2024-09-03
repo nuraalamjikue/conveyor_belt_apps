@@ -1,0 +1,57 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useIsFocused} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import React, {useEffect, useState} from 'react';
+import LoginScreen from '../screens/LoginScreen';
+import isLoginExpired from '../utilities/Time';
+import Sidebar from './SidebarStack';
+
+const {Navigator, Screen} = createNativeStackNavigator();
+
+const MainStack = ({token}) => {
+  const isFocused = useIsFocused();
+  const [isTokenExpired, setIsTokenExpired] = useState<boolean>();
+
+  let currentDate = new Date().toUTCString();
+  let isTokenCheck;
+
+  const fun = async () => {
+    let date = await AsyncStorage.getItem('expDate');
+    let expDate;
+
+    if (date) {
+      expDate = new Date(Number(date) * 1000).toUTCString();
+    }
+    isTokenCheck = isLoginExpired(new Date(expDate!), new Date(currentDate));
+    setIsTokenExpired(isTokenCheck);
+    if (isTokenCheck) {
+      await AsyncStorage.removeItem('token');
+    }
+  };
+
+  useEffect(() => {
+    if (isFocused) {
+      fun();
+    }
+  }, [isFocused]);
+
+  if (isTokenExpired === undefined) {
+    console.log('isTokenExpired', isTokenExpired);
+    return null;
+  } else {
+    return (
+      <Navigator
+        initialRouteName={
+          isTokenExpired === false && token ? 'Sidebar' : 'Login'
+        }
+        screenOptions={{
+          headerShown: false,
+        }}>
+        <Screen name="Login" component={LoginScreen} />
+        <Screen name="Sidebar" component={Sidebar} />
+      </Navigator>
+    );
+  }
+};
+
+export default MainStack;

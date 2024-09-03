@@ -1,0 +1,3 @@
+set RCT_METRO_PORT=8081
+set PROJECT_ROOT=D:\Dev\ERP_Apps\ERP_Mobile_Apps
+set REACT_NATIVE_PATH=D:\Dev\ERP_Apps\ERP_Mobile_Apps\node_modules\react-native
